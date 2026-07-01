@@ -1,0 +1,1 @@
+export function SectionHeading({ title, description, }: { title: string; description?: string; }) { return ( <div className="space-y-2"> <h2 className="text-3xl font-semibold tracking-tight text-slate-900"> {title} </h2> {description ? ( <p className="max-w-2xl text-sm text-slate-600">{description}</p> ) : null} </div> ); } 
