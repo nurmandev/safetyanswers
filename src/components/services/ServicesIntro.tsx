@@ -35,7 +35,7 @@ export function ServicesIntro() {
           </div>
 
           <div className="relative h-[400px] lg:h-[480px] border border-slate-200 dark:border-slate-700 shadow-lg">
-            <Image src="/employees.jpg" alt="Our consultancy services" fill className="object-cover" />
+            <Image src="/services.jpg" alt="Our consultancy services" fill className="object-cover" />
           </div>
         </div>
       </div>
