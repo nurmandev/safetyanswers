@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MessageCircle, Globe, Share2, Send } from "lucide-react";
 
 const quickLinks = [
   { href: "/", label: "Home" },
@@ -50,13 +51,10 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-4 mt-6">
               <span className="text-xs text-slate-500">Follow us:</span>
-              {["twitter", "linkedin", "facebook", "instagram"].map((s) => (
-                <Link key={s} href="/contact" className="text-slate-500 hover:text-white transition-colors">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" />
-                  </svg>
-                </Link>
-              ))}
+              <Link href="/contact" className="text-slate-500 hover:text-white transition-colors"><MessageCircle className="h-5 w-5" /></Link>
+              <Link href="/contact" className="text-slate-500 hover:text-white transition-colors"><Globe className="h-5 w-5" /></Link>
+              <Link href="/contact" className="text-slate-500 hover:text-white transition-colors"><Share2 className="h-5 w-5" /></Link>
+              <Link href="/contact" className="text-slate-500 hover:text-white transition-colors"><Send className="h-5 w-5" /></Link>
             </div>
           </div>
 
