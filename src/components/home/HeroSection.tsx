@@ -8,20 +8,20 @@ export function HeroSection() {
       <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#7c3aed]/10 dark:bg-[#7c3aed]/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-36 pb-20 lg:pt-44 lg:pb-32">
         <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
           {/* Text */}
-          <div className="lg:col-span-6 flex flex-col justify-center">
+          <div className="lg:col-span-6 flex flex-col justify-center text-center sm:text-left">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05]">
               Rigorous academic support.<br />
               <span className="text-[#7c3aed] dark:text-[#a78bfa]">Safe workplaces.</span>
             </h1>
-            <p className="mt-6 text-lg leading-relaxed text-slate-600 dark:text-slate-400 max-w-xl">
+            <p className="mt-6 text-lg leading-relaxed text-slate-600 dark:text-slate-400 max-w-xl mx-auto sm:mx-0">
               We bridge the gap between academic excellence and operational compliance.
               Get certified support in health & safety audits, data analysis, and professional writing.
             </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
+            <div className="mt-10 flex flex-wrap gap-4 justify-center sm:justify-start">
               <Link
                 href="/book"
                 className="bg-[#7c3aed] px-8 py-4 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-lg shadow-[#7c3aed]/25"
@@ -37,7 +37,7 @@ export function HeroSection() {
             </div>
 
             {/* Stats */}
-            <div className="mt-16 grid grid-cols-3 gap-8 border-t border-slate-200 dark:border-slate-800 pt-8 max-w-lg">
+            <div className="mt-16 grid grid-cols-3 gap-8 border-t border-slate-200 dark:border-slate-800 pt-8 max-w-lg mx-auto sm:mx-0">
               {[
                 { value: "500+", label: "Projects" },
                 { value: "98%", label: "Success Rate" },

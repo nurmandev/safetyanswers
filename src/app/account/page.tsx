@@ -216,7 +216,7 @@ export default function AccountPage() {
  CLIENT PORTAL
  </p>
  <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight max-w-lg leading-snug">
- Hello, John ðŸ‘‹ Welcome back.
+ Hello, Nurudeen
  </h2>
  <p className="text-sm text-purple-200 max-w-md">
  You're making great progress! Your PhD dissertation audit is 35%
