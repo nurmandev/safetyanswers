@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Header } from "@/components/Header";
+import { NotchNavbar } from "@/components/ui/notch-navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
@@ -11,8 +11,8 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {!isPortal && <Header />}
-      <div className="flex-1 flex flex-col">{children}</div>
+      {!isPortal && <NotchNavbar />}
+      <div className="flex-1 flex flex-col pt-16">{children}</div>
       {!isPortal && <Footer />}
       <ScrollToTop />
     </>
