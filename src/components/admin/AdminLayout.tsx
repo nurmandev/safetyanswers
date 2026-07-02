@@ -170,7 +170,7 @@ function AdminLayoutInner({
  </div>
  {!collapsed && (
  <span className="text-base font-bold tracking-tight text-[#0f172a] dark:text-white truncate">
- safetyanswers.com
+ safetyanswers
  </span>
  )}
  </Link>
@@ -341,7 +341,7 @@ function AdminLayoutInner({
  Admin Coordinator
  </p>
  <p className="text-xs text-slate-400 mt-0.5">
- admin@safetyanswers.com
+ admin@safetyanswers
  </p>
  </div>
  <Link
@@ -408,7 +408,7 @@ function AdminLayoutInner({
  {/* Footer */}
  <footer className="mt-16 pt-6 border-t border-slate-100 dark:border-[#1a1a1f] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">
  <span>
- Â© {new Date().getFullYear()} safetyanswers.com â€” All rights
+ Â© {new Date().getFullYear()} safetyanswers â€” All rights
  reserved.
  </span>
  <div className="flex gap-4">

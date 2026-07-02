@@ -264,7 +264,7 @@ export function AccountLayout({
  </svg>
  </div>
  <span className="text-lg lg:text-xl font-bold tracking-tight text-[#0f172a]">
- safetyanswers.com
+ safetyanswers
  </span>
  </div>
  <button

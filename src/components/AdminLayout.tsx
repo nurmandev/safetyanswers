@@ -271,7 +271,7 @@ export function AdminLayout({
               </svg>
             </div>
             <span className="text-base lg:text-xl font-bold tracking-tight text-[#0f172a] truncate">
-              safetyanswers.com Admin
+              safetyanswers Admin
             </span>
           </div>
 

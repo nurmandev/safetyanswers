@@ -713,7 +713,7 @@ export function DashboardOverview() {
  fontSize: "11px",
  fontWeight: 700,
  }}
-  formatter={(value: unknown, name: unknown) => [
+  formatter={(value: unknown, name: any) => [
   `${typeof value === "number" ? value : ""}%`,
   name,
   ]}
