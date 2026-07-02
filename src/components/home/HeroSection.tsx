@@ -13,7 +13,7 @@ export function HeroSection() {
           {/* Text */}
           <div className="lg:col-span-6 flex flex-col justify-center">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05]">
-              Rigorous academic support.{" "}
+              Rigorous academic support.<br />
               <span className="text-[#7c3aed] dark:text-[#a78bfa]">Safe workplaces.</span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-slate-600 dark:text-slate-400 max-w-xl">
