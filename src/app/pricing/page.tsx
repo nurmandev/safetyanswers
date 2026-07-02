@@ -1,1 +1,17 @@
-import { MarketingPage } from "@/components/MarketingPage"; export default function PricingPage() { return ( <MarketingPage title="Pricing" description="Flexible pricing for academic support, writing services, and consultancy engagements." intro="Choose from clear packages or request a tailored quote for higher-complexity work and organizational projects." links={[ { href: "/book", label: "Request a Quote", tone: "primary" }, { href: "/contact", label: "Contact Sales", tone: "secondary" }, ]} stats={[ { value: "Custom", label: "Project quotes" }, { value: "Flexible", label: "Service packages" }, { value: "Transparent", label: "Pricing structure" }, ]} features={[ { title: "Academic Packages", description: "Support for essays, projects, dissertations, editing, and analysis.", }, { title: "Writing Packages", description: "Resume, SOP, proposal, and report writing options for professional needs.", }, { title: "Consultancy Packages", description: "Tailored support for health, safety, compliance, and professional advisory work.", }, { title: "Custom Plans", description: "Large or specialized projects can be quoted individually based on scope and timeline.", }, ]} footnote="Pricing is designed to be straightforward, flexible, and aligned with project complexity." /> ); } 
+import { PricingPlans } from "@/components/pricing/PricingPlans";
+import { PricingTables } from "@/components/pricing/PricingTables";
+import { PricingExtras } from "@/components/pricing/PricingExtras";
+import { PricingFAQ } from "@/components/pricing/PricingFAQ";
+import { CTASection } from "@/components/home/CTASection";
+
+export default function PricingPage() {
+  return (
+    <>
+      <PricingPlans />
+      <PricingTables />
+      <PricingExtras />
+      <PricingFAQ />
+      <CTASection />
+    </>
+  );
+}
