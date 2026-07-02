@@ -1,8 +1,8 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, BookOpen, Shield, FileText, Rss, DollarSign, Mail, Menu, X, Sun, Moon } from "lucide-react"
+import { Home, BookOpen, Shield, FileText, Rss, DollarSign, Mail, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -24,41 +24,12 @@ const NavLink = ({ href, icon: Icon, label }: { href: string; icon: React.Compon
       href={href}
       className={cn(
         "group flex items-center gap-1.5 text-sm font-medium transition-colors whitespace-nowrap",
-        isActive ? "text-[#7c3aed] dark:text-[#a78bfa]" : "text-foreground/70 hover:text-foreground"
+        isActive ? "text-[#a78bfa]" : "text-white/70 hover:text-white"
       )}
     >
       <Icon className="w-4 h-4 opacity-70 group-hover:opacity-100" />
       <span>{label}</span>
     </Link>
-  )
-}
-
-function ThemeToggleBtn() {
-  const [mounted, setMounted] = useState(false)
-  const [isDark, setIsDark] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-    setIsDark(document.documentElement.classList.contains("dark"))
-  }, [])
-
-  const toggle = () => {
-    const next = !isDark
-    setIsDark(next)
-    document.documentElement.classList.toggle("dark", next)
-    localStorage.setItem("theme", next ? "dark" : "light")
-  }
-
-  if (!mounted) return <div className="w-9 h-9" />
-
-  return (
-    <button
-      onClick={toggle}
-      className="flex items-center justify-center w-9 h-9 hover:bg-foreground/5 transition-colors text-foreground/70 hover:text-foreground"
-      aria-label="Toggle theme"
-    >
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
   )
 }
 
@@ -70,10 +41,10 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
       <header className={cn("fixed top-0 inset-x-0 z-50 h-16 flex px-0", className)} {...props}>
 
         {/* Left Side Bar */}
-        <div className="flex-1 h-10 bg-zinc-50 dark:bg-black z-20 relative min-w-0">
+        <div className="flex-1 h-10 bg-black z-20 relative min-w-0">
           <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-            <line x1="0" y1="39.5" x2="100%" y2="39.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
-            <line x1="0" y1="36.5" x2="100%" y2="36.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
+            <line x1="0" y1="39.5" x2="100%" y2="39.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
+            <line x1="0" y1="36.5" x2="100%" y2="36.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
           </svg>
         </div>
 
@@ -82,19 +53,19 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
 
           {/* Left Slice */}
           <div className="w-[50px] h-full relative shrink-0">
-            <div className="absolute inset-0 bg-zinc-50 dark:bg-black" style={{ clipPath: "path('M0 0 H50 V64 C25 64 25 40 0 40 Z')" }} />
+            <div className="absolute inset-0 bg-black" style={{ clipPath: "path('M0 0 H50 V64 C25 64 25 40 0 40 Z')" }} />
             <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 50 64">
-              <path d="M0 39.5 C25 39.5 25 63.5 50 63.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
-              <path d="M0 36.5 C25 36.5 25 60.5 50 60.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
+              <path d="M0 39.5 C25 39.5 25 63.5 50 63.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
+              <path d="M0 36.5 C25 36.5 25 60.5 50 60.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
             </svg>
           </div>
 
           {/* Center Slice */}
           <div className="flex-1 h-full relative min-w-0 -ml-px">
-             <div className="absolute inset-0 bg-zinc-50 dark:bg-black">
+             <div className="absolute inset-0 bg-black">
                  <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
-                   <line x1="0" y1="63.5" x2="100%" y2="63.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
-                   <line x1="0" y1="60.5" x2="100%" y2="60.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
+                   <line x1="0" y1="63.5" x2="100%" y2="63.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
+                   <line x1="0" y1="60.5" x2="100%" y2="60.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
                  </svg>
              </div>
 
@@ -109,7 +80,7 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
 
               {/* Mobile Menu Button */}
               <button
-                className="md:hidden mb-1 p-1 text-foreground/70 hover:text-foreground transition-colors"
+                className="md:hidden mb-1 p-1 text-white/70 hover:text-white transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label="Toggle menu"
               >
@@ -131,9 +102,8 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
                   <NavLink key={item.label} {...item} />
                 ))}
 
-                <div className="flex gap-4 pl-4 border-l border-foreground/10 shrink-0 items-center">
-                  <ThemeToggleBtn />
-                  <Link href="/login" className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors whitespace-nowrap">
+                <div className="flex gap-4 pl-4 border-l border-white/10 shrink-0 items-center">
+                  <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white transition-colors whitespace-nowrap">
                     Log in
                   </Link>
                   <Link href="/register" className="px-3 py-1.5 text-sm font-medium text-white bg-[#7c3aed] hover:bg-[#6d28d9] transition-colors shadow-sm whitespace-nowrap">
@@ -143,29 +113,27 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
               </nav>
 
               {/* Mobile Right */}
-              <div className="md:hidden flex items-center gap-2 mb-1">
-                <ThemeToggleBtn />
-              </div>
+              <div className="md:hidden flex items-center gap-2 mb-1" />
 
              </div>
           </div>
 
           {/* Right Slice */}
           <div className="w-[50px] h-full relative shrink-0 -ml-px">
-            <div className="absolute inset-0 bg-zinc-50 dark:bg-black" style={{ clipPath: "path('M0 0 H50 V40 C25 40 25 64 0 64 Z')" }} />
+            <div className="absolute inset-0 bg-black" style={{ clipPath: "path('M0 0 H50 V40 C25 40 25 64 0 64 Z')" }} />
             <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 50 64">
-              <path d="M0 63.5 C25 63.5 25 39.5 50 39.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
-              <path d="M0 60.5 C25 60.5 25 36.5 50 36.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
+              <path d="M0 63.5 C25 63.5 25 39.5 50 39.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
+              <path d="M0 60.5 C25 60.5 25 36.5 50 36.5" fill="none" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
             </svg>
           </div>
 
         </div>
 
         {/* Right Side Bar */}
-        <div className="flex-1 h-10 bg-zinc-50 dark:bg-black z-20 relative min-w-0 -ml-px">
+        <div className="flex-1 h-10 bg-black z-20 relative min-w-0 -ml-px">
           <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-            <line x1="0" y1="39.5" x2="100%" y2="39.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
-            <line x1="0" y1="36.5" x2="100%" y2="36.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-foreground" />
+            <line x1="0" y1="39.5" x2="100%" y2="39.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
+            <line x1="0" y1="36.5" x2="100%" y2="36.5" stroke="currentColor" strokeOpacity={0.05} strokeWidth={0.5} className="text-white" />
           </svg>
         </div>
 
@@ -179,25 +147,25 @@ export function NotchNavbar({ className, ...props }: React.HTMLAttributes<HTMLEl
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-40 bg-zinc-50 dark:bg-black border-b border-foreground/5 p-4 md:hidden shadow-lg"
+            className="fixed inset-x-0 top-16 z-40 bg-black border-b border-white/10 p-4 md:hidden shadow-lg"
           >
              <nav className="flex flex-col gap-2">
                {navItems.map(item => (
                  <Link
                    key={item.label}
                    href={item.href}
-                   className="flex items-center gap-3 p-3 hover:bg-foreground/5 transition-colors"
-                   onClick={() => setIsMobileMenuOpen(false)}
-                 >
-                   <item.icon className="w-5 h-5 opacity-70" />
-                   <span className="font-medium text-foreground/90">{item.label}</span>
-                 </Link>
-               ))}
-               <div className="h-px bg-foreground/10 my-2" />
-               <div className="flex flex-col gap-2">
-                 <Link
-                    href="/login"
-                    className="flex items-center gap-3 p-3 hover:bg-foreground/5 transition-colors font-medium text-foreground/90"
+                    className="flex items-center gap-3 p-3 hover:bg-white/10 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <item.icon className="w-5 h-5 opacity-70" />
+                    <span className="font-medium text-white/90">{item.label}</span>
+                  </Link>
+                ))}
+                <div className="h-px bg-white/10 my-2" />
+                <div className="flex flex-col gap-2">
+                  <Link
+                     href="/login"
+                     className="flex items-center gap-3 p-3 hover:bg-white/10 transition-colors font-medium text-white/90"
                     onClick={() => setIsMobileMenuOpen(false)}
                  >
                    Log in
