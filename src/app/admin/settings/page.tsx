@@ -1,4 +1,4 @@
-import { AdminLayout } from "@/components/AdminLayout";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 
 const preferences = [
  {
@@ -25,11 +25,10 @@ const preferences = [
 
 export default function AdminSettingsPage() {
  return (
- <AdminLayout
- title="Preferences"
- description="Adjust site preferences, integrations, and platform defaults."
- currentPath="/admin/settings"
- >
+  <AdminLayout
+  title="Preferences"
+  currentPath="/admin/settings"
+  >
  <div className="bg-white border border-slate-100 shadow-sm p-8">
  
  {/* Header */}
