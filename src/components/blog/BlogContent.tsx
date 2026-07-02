@@ -395,9 +395,11 @@ export function BlogContent() {
       <FeaturedArticle />
       <CategoryCards />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <LatestArticles />
+      </div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16">
         <div className="grid gap-16 lg:grid-cols-12 items-start">
           <div className="lg:col-span-8">
-            <LatestArticles />
             <PremiumSection />
             <PopularArticles />
             <RecommendedReading />
