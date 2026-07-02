@@ -20,9 +20,6 @@ export function AboutHero() {
         </nav>
 
         <div className="max-w-2xl">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa] bg-[#7c3aed]/10 dark:bg-[#7c3aed]/20 px-4 py-2 inline-block mb-6">
-            Premium Consultancy Platform
-          </span>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05]">
             About <span className="text-[#7c3aed] dark:text-[#a78bfa]">safetyanswers</span>
           </h1>

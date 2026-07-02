@@ -12,9 +12,6 @@ export function HeroSection() {
         <div className="grid gap-16 lg:grid-cols-12 lg:items-center">
           {/* Text */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa] bg-[#7c3aed]/10 dark:bg-[#7c3aed]/20 px-4 py-2 self-start mb-6">
-              Premium Academic & Corporate Consultancy
-            </span>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05]">
               Rigorous academic support.{" "}
               <span className="text-[#7c3aed] dark:text-[#a78bfa]">Safe workplaces.</span>
