@@ -392,7 +392,7 @@ function Sidebar() {
 export function BlogContent() {
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32">
         <LatestArticles />
       </div>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16">
