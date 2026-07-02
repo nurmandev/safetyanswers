@@ -1,1 +1,29 @@
-import { MarketingPage } from "@/components/MarketingPage"; export default function ServicesPage() { return ( <MarketingPage title="Services" description="Academic consultancy, professional writing, health & safety advisory, and more." intro="Choose from a full portfolio of specialist services designed for students, professionals, and organizations that need dependable expertise and fast execution." links={[ { href: "/book", label: "Book a Service", tone: "primary" }, { href: "/pricing", label: "See Pricing", tone: "secondary" }, ]} stats={[ { value: "8", label: "Service categories" }, { value: "24/7", label: "Client support" }, { value: "100%", label: "Custom delivery" }, ]} features={[ { title: "Academic Consultancy", description: "Projects, thesis support, research methodology, editing, data analysis, and proofreading.", href: "/services/academic", }, { title: "Professional Writing", description: "CVs, SOPs, personal statements, proposals, plans, and technical reports.", href: "/services/professional-writing", }, { title: "Health & Safety Consultancy", description: "NEBOSH guidance, HSE documentation, risk assessment, and compliance support.", href: "/services/health-safety", }, { title: "Research & Analysis", description: "Support for statistical analysis, questionnaires, risk studies, and academic research design.", href: "/services/research", }, ]} footnote="Each service can be tailored to your academic, professional, or organizational needs." /> ); } 
+import { ServicesHero } from "@/components/services/ServicesHero";
+import { ServicesIntro } from "@/components/services/ServicesIntro";
+import { ServiceCategories } from "@/components/services/ServiceCategories";
+import { AcademicServicesGrid, ProfessionalWritingGrid, HealthSafetyGrid } from "@/components/services/ServiceCardGrid";
+import { ServicesProcess } from "@/components/services/ServicesProcess";
+import { WhyOurServices } from "@/components/services/WhyOurServices";
+import { ServiceComparison } from "@/components/services/ServiceComparison";
+import { ServicesTestimonials } from "@/components/services/ServicesTestimonials";
+import { ServicesFAQ } from "@/components/services/ServicesFAQ";
+import { CTASection } from "@/components/home/CTASection";
+
+export default function ServicesPage() {
+  return (
+    <>
+      <ServicesHero />
+      <ServicesIntro />
+      <ServiceCategories />
+      <AcademicServicesGrid />
+      <ProfessionalWritingGrid />
+      <HealthSafetyGrid />
+      <ServicesProcess />
+      <WhyOurServices />
+      <ServiceComparison />
+      <ServicesTestimonials />
+      <ServicesFAQ />
+      <CTASection />
+    </>
+  );
+}
