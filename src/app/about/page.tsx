@@ -1,1 +1,33 @@
-import { MarketingPage } from "@/components/MarketingPage"; export default function AboutPage() { return ( <MarketingPage title="About Us" description="Trusted expertise in academic, professional writing, and health & safety consultancy." intro="We help students, professionals, and organizations move forward with confidence through clear strategy, rigorous research, and dependable consulting support." links={[ { href: "/services", label: "Explore Services", tone: "primary" }, { href: "/book", label: "Book a Consultation", tone: "secondary" }, ]} stats={[ { value: "10+", label: "Years of expertise" }, { value: "500+", label: "Successful projects" }, { value: "98%", label: "Client satisfaction" }, ]} features={[ { title: "Our story", description: "We combine academic rigor with practical consultancy delivery to support clients at every stage of their goals.", href: "/services", }, { title: "Our values", description: "Quality, integrity, transparency, and measurable results remain central to everything we do.", href: "/contact", }, { title: "Our process", description: "Every engagement begins with strategy, clear timelines, and end-to-end support from brief to delivery.", href: "/how-it-works", }, { title: "Client confidence", description: "We support individuals and organizations with a premium experience backed by strong communication and proven outcomes.", href: "/testimonials", }, ]} footnote="We believe premium service means clarity, trust, and a smooth experience from the first inquiry to final delivery." /> ); } 
+import { AboutHero } from "@/components/about/AboutHero";
+import { CompanyIntro } from "@/components/about/CompanyIntro";
+import { OurStory } from "@/components/about/OurStory";
+import { MissionVision } from "@/components/about/MissionVision";
+import { WhatWeOffer } from "@/components/about/WhatWeOffer";
+import { AboutWhyUs } from "@/components/about/AboutWhyUs";
+import { Achievements } from "@/components/about/Achievements";
+import { WorkProcess } from "@/components/about/WorkProcess";
+import { Team } from "@/components/about/Team";
+import { AboutTestimonials } from "@/components/about/AboutTestimonials";
+import { Certifications } from "@/components/about/Certifications";
+import { AboutFAQ } from "@/components/about/AboutFAQ";
+import { CTASection } from "@/components/home/CTASection";
+
+export default function AboutPage() {
+  return (
+    <>
+      <AboutHero />
+      <CompanyIntro />
+      <OurStory />
+      <MissionVision />
+      <WhatWeOffer />
+      <AboutWhyUs />
+      <Achievements />
+      <WorkProcess />
+      <Team />
+      <AboutTestimonials />
+      <Certifications />
+      <AboutFAQ />
+      <CTASection />
+    </>
+  );
+}
