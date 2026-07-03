@@ -35,27 +35,6 @@ const latestArticles = [
   { title: "How to Write a CV That Gets Shortlisted", excerpt: "Stand out from the competition with a professionally crafted CV that highlights your achievements and impact.", category: "Professional Writing", author: "Emily Hartwell", date: "Jun 12, 2026", readTime: "5 min read", views: "6.3k", image: "/business.jpg", slug: "write-cv-gets-shortlisted" },
 ];
 
-const premiumArticles = [
-  { title: "Complete Dissertation Writing Guide", price: "$49", category: "Academic Manual", image: "/written.jpg" },
-  { title: "NEBOSH Exam Preparation Kit", price: "$79", category: "Safety Handbook", image: "/employees.jpg" },
-  { title: "SOP Writing Masterclass", price: "$39", category: "Writing Guide", image: "/business.jpg" },
-  { title: "SPSS Data Analysis Handbook", price: "$59", category: "Academic Manual", image: "/written.jpg" },
-];
-
-const popularArticles = [
-  { title: "How to Write a CV That Gets Shortlisted", readTime: "5 min read", views: "6.3k", shares: "1.2k", image: "/business.jpg", slug: "write-cv-gets-shortlisted" },
-  { title: "The Complete Guide to PhD Research Proposals", readTime: "9 min read", views: "5.6k", shares: "980", image: "/written.jpg", slug: "complete-guide-phd-research-proposals" },
-  { title: "Writing a Persuasive SOP for International Study Applications", readTime: "6 min read", views: "4.1k", shares: "850", image: "/written.jpg", slug: "writing-a-persuasive-sop-for-international-study-applications" },
-  { title: "Mastering SPSS for Quantitative Data Analysis", readTime: "10 min read", views: "3.2k", shares: "720", image: "/written.jpg", slug: "mastering-spss-quantitative-analysis" },
-];
-
-const recommended = [
-  { title: "Literature Review Strategies for Social Sciences", category: "Academic Support", readTime: "7 min read", image: "/written.jpg" },
-  { title: "HSE Documentation Best Practices", category: "Health & Safety", readTime: "6 min read", image: "/employees.jpg" },
-  { title: "Grant Writing Tips for Researchers", category: "Professional Writing", readTime: "8 min read", image: "/business.jpg" },
-  { title: "Understanding Statistical Significance", category: "Academic Support", readTime: "5 min read", image: "/written.jpg" },
-];
-
 const tags = [
   "Academic Writing", "Research", "SPSS", "STATA", "Dissertation",
   "NEBOSH", "Risk Assessment", "Health & Safety", "CV Writing",
@@ -177,31 +156,6 @@ function ArticleCard({ article }: { article: typeof latestArticles[0] }) {
   );
 }
 
-/* ---------- premium card ---------- */
-
-function PremiumCard({ item }: { item: typeof premiumArticles[0] }) {
-  return (
-    <div className="border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-6 flex flex-col group hover:border-[#7c3aed] dark:hover:border-[#7c3aed] transition-all">
-      <div className="flex items-center gap-2 mb-3">
-        <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L10 16.51l-6.18 3.25L5 14.14l-5-4.87 6.91-1.01L10 2z" /></svg>
-        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600">Premium</span>
-      </div>
-      <div className="relative h-32 border border-slate-200 dark:border-slate-700 overflow-hidden mb-3">
-        <Image src={item.image} alt={item.title} fill className="object-cover" />
-        <div className="absolute inset-0 bg-slate-950/20 flex items-center justify-center">
-          <svg className="h-8 w-8 text-white/80" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-        </div>
-      </div>
-      <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">{item.title}</h3>
-      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">{item.category}</span>
-      <div className="mt-auto pt-4 flex items-center justify-between">
-        <span className="text-lg font-extrabold text-[#7c3aed]">{item.price}</span>
-        <Link href="/premium" className="bg-[#7c3aed] text-white text-[10px] font-bold px-4 py-2 hover:bg-[#6d28d9] transition-colors">Unlock</Link>
-      </div>
-    </div>
-  );
-}
-
 /* ---------- sections ---------- */
 
 function LatestArticles() {
@@ -221,80 +175,8 @@ function LatestArticles() {
           </select>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {latestArticles.map((a) => <ArticleCard key={a.title} article={a} />)}
-      </div>
-    </section>
-  );
-}
-
-function PremiumSection() {
-  return (
-    <section className="mt-16">
-      <div className="bg-gradient-to-r from-[#7c3aed]/5 to-[#5b21b6]/5 dark:from-[#7c3aed]/10 dark:to-[#5b21b6]/10 border border-slate-200 dark:border-slate-800 p-8 lg:p-12">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-10">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa]">Premium</span>
-            <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Premium library</h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Unlock peer-reviewed guides, templates, and comprehensive resources</p>
-          </div>
-          <Link href="/premium" className="bg-[#7c3aed] px-6 py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shrink-0 text-center">Browse All Premium</Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {premiumArticles.map((p) => <PremiumCard key={p.title} item={p} />)}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PopularArticles() {
-  return (
-    <section className="mt-16">
-      <div className="flex items-center gap-2 mb-8">
-        <svg className="h-5 w-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa]">Trending</span>
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Popular articles</h2>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {popularArticles.map((a, i) => (
-          <Link key={a.title} href={`/blog/${a.slug}`} className="group border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-[#7c3aed]/30 dark:hover:border-[#a78bfa]/30 transition-all">
-            <div className="relative h-36 border-b border-slate-200 dark:border-slate-800 overflow-hidden">
-              <Image src={a.image} alt={a.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute top-2 left-2 bg-orange-500 text-white text-[9px] font-bold px-2 py-0.5">#{i + 1}</div>
-            </div>
-            <div className="p-4">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#7c3aed] dark:group-hover:text-[#a78bfa] transition-colors">{a.title}</h3>
-              <div className="mt-3 flex items-center justify-between text-[9px] text-slate-400">
-                <span>{a.readTime}</span>
-                <span>{a.views} views</span>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function RecommendedReading() {
-  return (
-    <section className="mt-16">
-      <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa]">Recommended</span>
-      <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">You might also like</h2>
-      <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {recommended.map((a) => (
-          <Link key={a.title} href="/blog" className="group border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-[#7c3aed]/30 dark:hover:border-[#a78bfa]/30 transition-all">
-            <div className="relative h-36 border-b border-slate-200 dark:border-slate-800 overflow-hidden">
-              <Image src={a.image} alt={a.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-            </div>
-            <div className="p-4">
-              <span className="text-[9px] font-bold uppercase tracking-wider text-[#7c3aed]">{a.category}</span>
-              <h3 className="mt-1 text-xs font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#7c3aed] dark:group-hover:text-[#a78bfa] transition-colors">{a.title}</h3>
-              <span className="mt-2 block text-[9px] text-slate-400">{a.readTime}</span>
-            </div>
-          </Link>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {latestArticles.slice(0, 2).map((a) => <ArticleCard key={a.title} article={a} />)}
       </div>
     </section>
   );
@@ -398,9 +280,6 @@ export function BlogContent() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16">
         <div className="grid gap-16 lg:grid-cols-12 items-start">
           <div className="lg:col-span-8">
-            <PremiumSection />
-            <PopularArticles />
-            <RecommendedReading />
             <PopularTags />
           </div>
           <div className="lg:col-span-4 lg:sticky lg:top-24">
