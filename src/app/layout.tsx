@@ -5,5 +5,5 @@ import "./globals.css"; const rency = localFont({ src: "../../public/Rency-Regul
 }); export const metadata: Metadata = { title: "safetyanswers.com | Academic, Writing & Safety Services", description: "Premium consultancy platform for academic support, professional writing, and health & safety services.",
 }; export default function RootLayout({ children,
 }: Readonly<{ children: React.ReactNode;
-}>) { return (<html lang="en" className={`${rency.variable} h-full antialiased`}><body className="min-h-full flex flex-col bg-[#1a1a1a] text-white"><LayoutWrapper>{children}</LayoutWrapper></body></html>);
+}>) { return (<html lang="en" className={`${rency.variable} h-full antialiased`}><body className="min-h-full flex flex-col bg-slate-50 text-slate-900"><LayoutWrapper>{children}</LayoutWrapper></body></html>);
 }

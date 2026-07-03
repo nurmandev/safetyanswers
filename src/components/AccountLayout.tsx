@@ -197,10 +197,10 @@ export function AccountLayout({
  const [sidebarOpen, setSidebarOpen] = useState(false);
 
  return (
- <div className="min-h-screen bg-[#0d0d0d] flex flex-col lg:flex-row lg:overflow-hidden">
+ <div className="min-h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden">
  <button
  onClick={() => setSidebarOpen(!sidebarOpen)}
- className="lg:hidden fixed top-4 left-4 z-50 flex h-11 w-11 items-center justify-center bg-[#c8ff00] text-black shadow-lg ring-1 ring-black/20"
+ className="lg:hidden fixed top-4 left-4 z-50 flex h-11 w-11 items-center justify-center bg-[#7c3aed] text-white shadow-lg ring-1 ring-white/20"
  >
  {sidebarOpen ? (
  <svg
@@ -235,20 +235,20 @@ export function AccountLayout({
 
  {sidebarOpen && (
  <div
- className="lg:hidden fixed inset-0 z-30 bg-black/70 backdrop-blur-sm"
+ className="lg:hidden fixed inset-0 z-30 bg-slate-950/55 backdrop-blur-sm"
  onClick={() => setSidebarOpen(false)}
  />
  )}
 
  <aside
-  className={`fixed lg:sticky lg:top-0 left-0 h-screen lg:h-screen w-[84vw] max-w-[320px] bg-[#111111] border-r border-white/10 z-40 lg:z-auto transition-transform duration-300 ease-out shadow-2xl lg:shadow-none ${
+  className={`fixed lg:sticky lg:top-0 left-0 h-screen lg:h-screen w-[84vw] max-w-[320px] bg-white border-r border-slate-100 z-40 lg:z-auto transition-transform duration-300 ease-out shadow-2xl lg:shadow-none ${
   sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
   } lg:w-64 lg:flex lg:flex-col lg:border-b lg:border-r lg:border-b-0 lg:p-6 p-5 flex flex-col justify-between shrink-0`}
  >
  <div>
  <div className="flex items-center justify-between gap-3 mb-8">
  <div className="flex items-center gap-3">
- <div className="flex h-10 w-10 items-center justify-center bg-[#c8ff00] text-black">
+ <div className="flex h-10 w-10 items-center justify-center bg-[#7c3aed] text-white">
  <svg
  className="h-5 w-5 animate-pulse-slow"
  fill="none"
@@ -263,13 +263,13 @@ export function AccountLayout({
  />
  </svg>
  </div>
- <span className="text-lg lg:text-xl font-bold tracking-tight text-white">
+ <span className="text-lg lg:text-xl font-bold tracking-tight text-[#0f172a]">
  safetyanswers
  </span>
  </div>
  <button
  onClick={() => setSidebarOpen(false)}
- className="lg:hidden flex h-9 w-9 items-center justify-center border border-white/20 text-white/50 hover:bg-white/10"
+ className="lg:hidden flex h-9 w-9 items-center justify-center border border-slate-200 text-slate-500 hover:bg-slate-50"
  >
  <svg
  className="h-4 w-4"
@@ -288,7 +288,7 @@ export function AccountLayout({
  </div>
 
  <div className="mb-8 max-h-[calc(100vh-220px)] lg:max-h-none overflow-y-auto lg:overflow-y-visible">
- <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-3">
+ <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 px-3">
  Overview
  </p>
  <nav className="space-y-1">
@@ -301,8 +301,8 @@ export function AccountLayout({
  onClick={() => setSidebarOpen(false)}
  className={`flex items-center gap-4 px-4 py-3 text-sm font-semibold transition-all whitespace-nowrap ${
  isActive
- ? "bg-[#c8ff00] text-black shadow-md"
- : "text-white/60 hover:bg-white/5 hover:text-white"
+ ? "bg-[#7c3aed] text-white shadow-md"
+ : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
  }`}
  >
  <span className="flex-shrink-0">{item.icon}</span>
@@ -314,8 +314,8 @@ export function AccountLayout({
  </div>
  </div>
 
- <div className="space-y-1 pt-6 border-t border-white/10">
- <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-3 hidden lg:block">
+ <div className="space-y-1 pt-6 border-t border-slate-100">
+ <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 px-3 hidden lg:block">
  Settings
  </p>
  <nav className="space-y-1">
@@ -328,8 +328,8 @@ export function AccountLayout({
  onClick={() => setSidebarOpen(false)}
  className={`flex items-center gap-4 px-4 py-3 text-sm font-semibold transition-all whitespace-nowrap ${
  isActive
- ? "bg-[#c8ff00] text-black shadow-md"
- : "text-white/60 hover:bg-white/5 hover:text-white"
+ ? "bg-[#7c3aed] text-white shadow-md"
+ : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
  }`}
  >
  <span className="flex-shrink-0">{item.icon}</span>
@@ -340,7 +340,7 @@ export function AccountLayout({
  <Link
  href="/login"
  onClick={() => setSidebarOpen(false)}
- className="flex items-center gap-4 px-4 py-3 text-sm font-semibold text-red-400 hover:bg-red-500/10 transition-all"
+ className="flex items-center gap-4 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 transition-all"
  >
  <svg
  className="h-5 w-5 flex-shrink-0"
@@ -361,10 +361,10 @@ export function AccountLayout({
  </div>
  </aside>
 
-      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-10 overflow-x-hidden lg:overflow-y-auto lg:max-h-screen pt-16 lg:pt-6 bg-[#0d0d0d]">
+      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-10 overflow-x-hidden lg:overflow-y-auto lg:max-h-screen pt-16 lg:pt-6">
  <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-6 sm:mb-8">
  <div className="relative w-full max-w-md">
- <span className="absolute inset-y-0 left-4 flex items-center text-white/30">
+ <span className="absolute inset-y-0 left-4 flex items-center text-slate-400">
  <svg
  className="h-5 w-5"
  fill="none"
@@ -382,7 +382,7 @@ export function AccountLayout({
  <input
  type="text"
  placeholder="Search your consultancy file...."
- className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 shadow-sm focus:outline-none focus:border-[#c8ff00]"
+ className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 text-sm text-slate-700 shadow-sm focus:outline-none focus:border-[#7c3aed]"
  />
  </div>
 

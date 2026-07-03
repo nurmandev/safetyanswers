@@ -47,18 +47,18 @@ const tags = [
 function ArticleCard({ article }: { article: typeof latestArticles[0] }) {
   return (
     <Link href={`/blog/${article.slug}`} className="group border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 hover:border-[#7c3aed]/30 dark:hover:border-[#a78bfa]/30 transition-all">
-      <div className="relative h-28 sm:h-40 border-b border-slate-200 dark:border-slate-800 overflow-hidden">
+      <div className="relative h-48 border-b border-slate-200 dark:border-slate-800 overflow-hidden">
         <Image src={article.image} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
       </div>
-      <div className="p-3 sm:p-5">
+      <div className="p-5">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-[10px] font-bold uppercase tracking-wider text-[#7c3aed] dark:text-[#a78bfa]">{article.category}</span>
           <span className="text-[10px] text-slate-400">·</span>
           <span className="text-[10px] text-slate-400">{article.readTime}</span>
         </div>
-        <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#7c3aed] dark:group-hover:text-[#a78bfa] transition-colors">{article.title}</h3>
-        <p className="mt-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">{article.excerpt}</p>
-        <div className="mt-3 sm:mt-4 flex items-center justify-between text-[10px] text-slate-400">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug group-hover:text-[#7c3aed] dark:group-hover:text-[#a78bfa] transition-colors">{article.title}</h3>
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">{article.excerpt}</p>
+        <div className="mt-4 flex items-center justify-between text-[10px] text-slate-400">
           <span>{article.author}</span>
           <span>{article.views} views</span>
         </div>
@@ -71,22 +71,22 @@ function ArticleCard({ article }: { article: typeof latestArticles[0] }) {
 
 function PremiumCard({ item }: { item: typeof premiumArticles[0] }) {
   return (
-    <div className="group border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-3 sm:p-5 hover:border-[#7c3aed] dark:hover:border-[#7c3aed] transition-all flex flex-col">
-      <div className="flex items-center gap-2 mb-2 sm:mb-3">
-        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L10 16.51l-6.18 3.25L5 14.14l-5-4.87 6.91-1.01L10 2z" /></svg>
+    <div className="group border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-5 hover:border-[#7c3aed] dark:hover:border-[#7c3aed] transition-all flex flex-col">
+      <div className="flex items-center gap-2 mb-3">
+        <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L10 16.51l-6.18 3.25L5 14.14l-5-4.87 6.91-1.01L10 2z" /></svg>
         <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600">Premium</span>
       </div>
-      <div className="relative h-24 sm:h-32 border border-slate-200 dark:border-slate-700 overflow-hidden mb-2 sm:mb-3">
+      <div className="relative h-32 border border-slate-200 dark:border-slate-700 overflow-hidden mb-3">
         <Image src={item.image} alt={item.title} fill className="object-cover" />
         <div className="absolute inset-0 bg-slate-950/20 flex items-center justify-center">
-          <svg className="h-6 w-6 sm:h-8 sm:w-8 text-white/80" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+          <svg className="h-8 w-8 text-white/80" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
         </div>
       </div>
-      <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mb-0.5 sm:mb-1">{item.title}</h3>
+      <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">{item.title}</h3>
       <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase">{item.category}</span>
-      <div className="mt-auto pt-3 sm:pt-4 flex items-center justify-between">
-        <span className="text-base sm:text-lg font-extrabold text-[#7c3aed]">{item.price}</span>
-        <Link href="/premium" className="bg-[#7c3aed] text-white text-[10px] font-bold px-3 sm:px-4 py-1.5 sm:py-2 hover:bg-[#6d28d9] transition-colors">Unlock</Link>
+      <div className="mt-auto pt-4 flex items-center justify-between">
+        <span className="text-lg font-extrabold text-[#7c3aed]">{item.price}</span>
+        <Link href="/premium" className="bg-[#7c3aed] text-white text-[10px] font-bold px-4 py-2 hover:bg-[#6d28d9] transition-colors">Unlock</Link>
       </div>
     </div>
   );
@@ -94,7 +94,7 @@ function PremiumCard({ item }: { item: typeof premiumArticles[0] }) {
 
 /* ---------- sidebar ---------- */
 
-function Sidebar({ filter, setFilter, filterOptions }: { filter: string; setFilter: (f: string) => void; filterOptions: string[] }) {
+function Sidebar() {
   const sidebarPopular = [
     { title: "How to Write a CV That Gets Shortlisted", views: "6.3k" },
     { title: "The Complete Guide to PhD Research Proposals", views: "5.6k" },
@@ -105,26 +105,6 @@ function Sidebar({ filter, setFilter, filterOptions }: { filter: string; setFilt
 
   return (
     <aside className="space-y-8">
-      {/* Filter */}
-      <div>
-        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Filter</h4>
-        <div className="flex flex-wrap gap-1.5">
-          {filterOptions.map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`text-[10px] sm:text-xs font-bold px-2.5 py-1.5 border transition-colors ${
-                filter === f
-                  ? "bg-[#7c3aed] text-white border-[#7c3aed]"
-                  : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-[#7c3aed] dark:hover:border-[#a78bfa]"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Search */}
       <div>
         <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-4">Search</h4>
@@ -162,6 +142,16 @@ function Sidebar({ filter, setFilter, filterOptions }: { filter: string; setFilt
           ))}
         </div>
       </div>
+
+      {/* Newsletter */}
+      <div className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6">
+        <h4 className="text-xs font-bold uppercase tracking-wider text-[#7c3aed] dark:text-[#a78bfa] mb-2">Newsletter</h4>
+        <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">Get weekly insights delivered to your inbox</p>
+        <form className="space-y-2">
+          <input type="email" placeholder="Your email" className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#7c3aed]" />
+          <button type="submit" className="w-full bg-[#7c3aed] text-white text-xs font-bold py-2.5 hover:bg-[#6d28d9] transition-colors">Subscribe</button>
+        </form>
+      </div>
     </aside>
   );
 }
@@ -177,22 +167,41 @@ export function BlogContent() {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 sm:pt-32">
-        <div className="mb-6 sm:mb-10">
-          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa]">Articles</span>
-          <h2 className="mt-1 text-lg sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Latest articles</h2>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 sm:pt-32">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#7c3aed] dark:text-[#a78bfa]">Articles</span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Latest articles</h2>
+          </div>
+          <div className="flex flex-wrap gap-2 mt-4 sm:mt-0">
+            {filterOptions.map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`text-xs font-bold px-3 py-1.5 border transition-colors ${
+                  filter === f
+                    ? "bg-[#7c3aed] text-white border-[#7c3aed]"
+                    : "border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-[#7c3aed] dark:hover:border-[#a78bfa]"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
         </div>
+      </div>
 
-        <div className="grid gap-6 lg:gap-10 lg:grid-cols-12 items-start">
-          <div className="lg:col-span-8 space-y-6 lg:space-y-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
+        <div className="grid gap-8 lg:grid-cols-12 items-start">
+          <div className="lg:col-span-8 space-y-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {filtered.slice(0, 2).map((a) => <ArticleCard key={a.title} article={a} />)}
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-4 sm:mb-5">
-                <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L10 16.51l-6.18 3.25L5 14.14l-5-4.87 6.91-1.01L10 2z" /></svg>
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-amber-600">Premium</span>
-                <h3 className="text-sm sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">Premium library</h3>
+              <div className="flex items-center gap-2 mb-4">
+                <svg className="h-4 w-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l3.09 6.26L20 9.27l-5 4.87 1.18 6.88L10 16.51l-6.18 3.25L5 14.14l-5-4.87 6.91-1.01L10 2z" /></svg>
+                <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-600">Premium</span>
+                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">Premium library</h3>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {premiumArticles.slice(0, 2).map((p) => <PremiumCard key={p.title} item={p} />)}
@@ -200,7 +209,7 @@ export function BlogContent() {
             </div>
           </div>
           <div className="lg:col-span-4 lg:sticky lg:top-24">
-            <Sidebar filter={filter} setFilter={setFilter} filterOptions={filterOptions} />
+            <Sidebar />
           </div>
         </div>
       </div>

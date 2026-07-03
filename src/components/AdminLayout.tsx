@@ -201,11 +201,11 @@ export function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0d0d0d] flex flex-col lg:flex-row lg:overflow-hidden">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden">
       {/* Mobile Sidebar Toggle Button */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center bg-[#c8ff00] text-black hover:bg-[#b8ef00] transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center bg-[#7c3aed] text-white hover:bg-[#6d28d9] transition-colors"
       >
         {sidebarOpen ? (
           <svg
@@ -241,21 +241,21 @@ export function AdminLayout({
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-30 transition-opacity"
+          className="lg:hidden fixed inset-0 bg-black/50 z-30 transition-opacity"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:static top-0 left-0 h-screen lg:h-auto w-64 bg-[#111111] border-r border-white/10 z-40 lg:z-auto transition-transform duration-300 transform ${
+        className={`fixed lg:static top-0 left-0 h-screen lg:h-auto w-64 bg-white border-r border-slate-100 z-40 lg:z-auto transition-transform duration-300 transform ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         } lg:w-64 lg:flex lg:flex-col lg:border-b lg:border-r lg:border-b-0 lg:p-6 p-6 flex flex-col justify-between shrink-0`}
       >
         <div>
           {/* Logo Section */}
           <div className="flex items-center gap-3 mb-10">
-            <div className="flex h-10 w-10 items-center justify-center bg-[#c8ff00] text-black">
+            <div className="flex h-10 w-10 items-center justify-center bg-[#7c3aed] text-white">
               <svg
                 className="h-5 w-5 animate-pulse-slow"
                 fill="none"
@@ -270,14 +270,14 @@ export function AdminLayout({
                 />
               </svg>
             </div>
-            <span className="text-base lg:text-xl font-bold tracking-tight text-white truncate">
+            <span className="text-base lg:text-xl font-bold tracking-tight text-[#0f172a] truncate">
               safetyanswers Admin
             </span>
           </div>
 
           {/* Navigation Links */}
           <div className="mb-8 max-h-[calc(100vh-200px)] lg:max-h-none overflow-y-auto lg:overflow-y-visible">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-4 px-3">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 px-3">
               Control Center
             </p>
             <nav className="space-y-1">
@@ -290,8 +290,8 @@ export function AdminLayout({
                     onClick={() => setSidebarOpen(false)}
                     className={`flex items-center gap-4 px-4 py-3 text-sm font-semibold transition-all whitespace-nowrap ${
                       isActive
-                        ? "bg-[#c8ff00] text-black"
-                        : "text-white/60 hover:bg-white/5 hover:text-white"
+                        ? "bg-[#7c3aed] text-white shadow-md"
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
                     }`}
                   >
                     <span className="flex-shrink-0">{item.icon}</span>
@@ -304,11 +304,11 @@ export function AdminLayout({
         </div>
 
         {/* Settings / Go Back Section */}
-        <div className="space-y-1 pt-6 border-t border-white/10">
+        <div className="space-y-1 pt-6 border-t border-slate-100">
           <Link
             href="/"
             onClick={() => setSidebarOpen(false)}
-            className="flex items-center gap-4 px-4 py-3 text-sm font-semibold text-white/50 hover:bg-white/5 hover:text-white transition-all"
+            className="flex items-center gap-4 px-4 py-3 text-sm font-semibold text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all"
           >
             <svg
               className="h-5 w-5 flex-shrink-0"
@@ -329,17 +329,17 @@ export function AdminLayout({
       </aside>
 
       {/* Main Workspace */}
-      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-10 overflow-x-hidden lg:overflow-y-auto pt-16 lg:pt-6 bg-[#0d0d0d]">
+      <div className="flex-1 flex flex-col p-4 sm:p-6 lg:p-10 overflow-x-hidden lg:overflow-y-auto pt-16 lg:pt-6">
         {/* Top Bar Header */}
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8 pb-6 border-b border-white/10">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#c8ff00]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#7c3aed]">
               Administrative Console
             </span>
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-white leading-tight truncate">
+            <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight truncate">
               {title}
             </h1>
-            <p className="text-xs text-white/40 mt-1 max-w-xl line-clamp-2">
+            <p className="text-xs text-slate-400 mt-1 max-w-xl line-clamp-2">
               {description}
             </p>
           </div>
@@ -347,18 +347,18 @@ export function AdminLayout({
           <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-4 flex-wrap sm:flex-nowrap">
             <Link
               href="/"
-              className="inline-flex h-9 sm:h-10 px-3 sm:px-5 items-center justify-center border border-white/20 text-white/70 hover:border-white/50 hover:bg-white/5 text-[11px] font-bold transition-all whitespace-nowrap"
+              className="inline-flex h-9 sm:h-10 px-3 sm:px-5 items-center justify-center border border-slate-200 text-slate-700 hover:border-slate-800 hover:bg-slate-50 text-[11px] font-bold transition-all whitespace-nowrap"
             >
               View Main Site
             </Link>
 
-            <div className="h-6 w-px bg-white/10 hidden sm:block" />
+            <div className="h-6 w-px bg-slate-200 hidden sm:block" />
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex h-9 sm:h-10 w-9 sm:w-10 items-center justify-center bg-[#c8ff00] text-black font-bold font-mono text-xs sm:text-sm flex-shrink-0">
+              <div className="flex h-9 sm:h-10 w-9 sm:w-10 items-center justify-center bg-slate-900 text-white font-bold font-mono text-xs sm:text-sm flex-shrink-0">
                 AD
               </div>
-              <span className="text-xs sm:text-sm font-bold text-white hidden sm:inline">
+              <span className="text-xs sm:text-sm font-bold text-slate-900 hidden sm:inline">
                 Admin Portal
               </span>
             </div>
