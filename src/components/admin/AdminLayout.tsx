@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ThemeProvider } from "./ThemeContext";
+import { useAdminAuth } from "@/lib/admin-auth-context";
 import {
  LayoutDashboard,
  FileText,
@@ -114,18 +115,19 @@ const sidebarGroups = [
 ];
 
 function AdminLayoutInner({
- title,
- children,
+  title,
+  children,
 }: {
- title?: string;
- children: React.ReactNode;
+  title?: string;
+  children: React.ReactNode;
 }) {
- const pathname = usePathname();
- const router = useRouter();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { admin, logout } = useAdminAuth();
 
- const [collapsed, setCollapsed] = useState(false);
- const [mobileOpen, setMobileOpen] = useState(false);
- const [searchQuery, setSearchQuery] = useState("");
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
  const [showProfileMenu, setShowProfileMenu] = useState(false);
  const [showQuickActions, setShowQuickActions] = useState(false);
@@ -233,13 +235,13 @@ function AdminLayoutInner({
  <Users className="h-5 w-5 shrink-0" />
  {!collapsed && <span>Admin Profile</span>}
  </Link>
- <Link
- href="/login"
- className="flex items-center gap-4 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all"
- >
- <LogOut className="h-5 w-5 shrink-0" />
- {!collapsed && <span>Logout</span>}
- </Link>
+  <button
+    onClick={async () => { await logout(); }}
+    className="flex items-center gap-4 px-4 py-3 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 transition-all w-full text-left"
+  >
+    <LogOut className="h-5 w-5 shrink-0" />
+    {!collapsed && <span>Logout</span>}
+  </button>
  </div>
  </aside>
 
@@ -322,12 +324,12 @@ function AdminLayoutInner({
  onClick={() => setShowProfileMenu(!showProfileMenu)}
  className="flex items-center gap-3"
  >
- <div className="flex h-10 w-10 items-center justify-center bg-slate-900 text-white font-bold font-mono shadow-sm border border-slate-100 dark:border-[#1a1a1f]">
- AD
- </div>
- <span className="hidden sm:block text-sm font-bold text-slate-900 dark:text-white">
- Admin
- </span>
+  <div className="flex h-10 w-10 items-center justify-center bg-slate-900 text-white font-bold font-mono shadow-sm border border-slate-100 dark:border-[#1a1a1f]">
+    {admin?.name ? admin.name.charAt(0).toUpperCase() : "A"}
+  </div>
+  <span className="hidden sm:block text-sm font-bold text-slate-900 dark:text-white">
+    {admin?.name || "Admin"}
+  </span>
  </button>
  {showProfileMenu && (
  <>
@@ -336,14 +338,14 @@ function AdminLayoutInner({
  onClick={() => setShowProfileMenu(false)}
  />
  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-[#0c0c0e] border border-slate-100 dark:border-[#1a1a1f] shadow-lg z-20 py-1 text-sm">
- <div className="px-4 py-3 border-b border-slate-100 dark:border-[#1a1a1f]">
- <p className="font-bold text-slate-900 dark:text-white">
- Admin Coordinator
- </p>
- <p className="text-xs text-slate-400 mt-0.5">
- admin@safetyanswers
- </p>
- </div>
+  <div className="px-4 py-3 border-b border-slate-100 dark:border-[#1a1a1f]">
+    <p className="font-bold text-slate-900 dark:text-white">
+      {admin?.name || "Admin"}
+    </p>
+    <p className="text-xs text-slate-400 mt-0.5">
+      {admin?.email || "admin@safetyanswers"}
+    </p>
+  </div>
  <Link
  href="/admin/profile"
  className="block px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-[#131317]"
@@ -358,13 +360,12 @@ function AdminLayoutInner({
  >
  Settings
  </Link>
- <Link
- href="/login"
- className="block px-4 py-2.5 font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
- onClick={() => setShowProfileMenu(false)}
- >
- Logout
- </Link>
+  <button
+    onClick={async () => { setShowProfileMenu(false); await logout(); }}
+    className="block w-full text-left px-4 py-2.5 font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+  >
+    Logout
+  </button>
  </div>
  </>
  )}

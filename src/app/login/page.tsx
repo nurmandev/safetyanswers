@@ -2,14 +2,34 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    const result = await login(email, password);
+    if (result.success) {
+      router.push("/account");
+    } else {
+      setError(result.message);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-[440px]">
-        {/* Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center bg-[#7c3aed] text-white shadow-lg mb-4">
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
@@ -20,17 +40,24 @@ export default function LoginPage() {
           <p className="text-sm text-slate-500 mt-1">Sign in to your account to continue</p>
         </div>
 
-        {/* Card */}
         <div className="bg-white border border-slate-200 shadow-sm p-8">
-          <form className="space-y-5">
+          {error && (
+            <div className="mb-5 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+              {error}
+            </div>
+          )}
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                 Email address
               </label>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
                 placeholder="you@example.com"
+                required
               />
             </div>
 
@@ -41,8 +68,11 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400 pr-11"
                   placeholder="••••••••"
+                  required
                 />
                 <button
                   type="button"
@@ -73,13 +103,16 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm">
-              Sign in
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm disabled:opacity-50"
+            >
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
         </div>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-slate-500">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="font-bold text-[#7c3aed] hover:underline">

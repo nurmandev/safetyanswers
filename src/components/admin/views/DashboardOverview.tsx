@@ -98,37 +98,34 @@ import {
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
- adminKpiCards,
- revenueData,
- bookingAnalytics,
- servicePerformance,
- paymentByGateway,
- recentBookings,
- recentPayments,
- latestUsers,
- latestBlogPosts,
- popularServices,
- topPremiumArticles,
- activityTimeline,
- notificationsData,
- systemHealthData,
- reportsSnapshot,
- type AdminKpiCard,
- type RevenueDataPoint,
- type BookingAnalytics,
- type ServicePerformance,
- type PaymentGatewayData,
- type Booking,
- type Payment,
- type User,
- type BlogPost,
- type PopularService,
- type PremiumArticle,
- type Activity as ActivityItem,
- type Notification,
- type SystemHealth,
- type ReportSnapshot,
+  adminKpiCards,
+  revenueData,
+  servicePerformance,
+  paymentByGateway,
+  recentPayments,
+  latestUsers,
+  latestBlogPosts,
+  popularServices,
+  topPremiumArticles,
+  activityTimeline,
+  notificationsData,
+  systemHealthData,
+  reportsSnapshot,
+  type AdminKpiCard,
+  type RevenueDataPoint,
+  type ServicePerformance,
+  type PaymentGatewayData,
+  type Payment,
+  type User,
+  type BlogPost,
+  type PopularService,
+  type PremiumArticle,
+  type Activity as ActivityItem,
+  type Notification,
+  type SystemHealth,
+  type ReportSnapshot,
 } from "@/lib/mock-data";
+import { api } from "@/lib/api-client";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
  DollarSign,
@@ -284,14 +281,66 @@ export function DashboardOverview() {
  const [time, setTime] = useState(new Date());
  const [revenuePeriod, setRevenuePeriod] = useState<string>("daily");
  const [isLoading, setIsLoading] = useState(true);
+ const [analytics, setAnalytics] = useState<{
+  totalBookings: number;
+  pendingBookings: number;
+  approvedBookings: number;
+  completedBookings: number;
+  cancelledBookings: number;
+  monthlyRevenue: number;
+  todayBookings: number;
+  weeklyBookings: number;
+  statusDistribution: Array<{ status: string; count: number }>;
+  categoryDistribution: Array<{ category: string; count: number }>;
+  upcomingBookings: Array<{
+   bookingId: string;
+   name: string;
+   service: string;
+   preferredDate: string;
+   preferredTime: string;
+   status: string;
+   assignedConsultant?: { name: string; title: string };
+  }>;
+ } | null>(null);
 
  useEffect(() => {
- const timer = setInterval(() => setTime(new Date()), 60000);
- const loadingTimer = window.setTimeout(() => setIsLoading(false), 700);
- return () => {
- clearInterval(timer);
- window.clearTimeout(loadingTimer);
- };
+  const timer = setInterval(() => setTime(new Date()), 60000);
+
+  const fetchAnalytics = async () => {
+   try {
+    const res = await api.get<{
+     totalBookings: number;
+     pendingBookings: number;
+     approvedBookings: number;
+     completedBookings: number;
+     cancelledBookings: number;
+     monthlyRevenue: number;
+     todayBookings: number;
+     weeklyBookings: number;
+     statusDistribution: Array<{ status: string; count: number }>;
+     categoryDistribution: Array<{ category: string; count: number }>;
+     upcomingBookings: Array<{
+      bookingId: string;
+      name: string;
+      service: string;
+      preferredDate: string;
+      preferredTime: string;
+      status: string;
+      assignedConsultant?: { name: string; title: string };
+     }>;
+    }>("/admin/analytics", true);
+    if (res.success && res.data) {
+     setAnalytics(res.data);
+    }
+   } catch {
+    // Fall back to mock data
+   } finally {
+    setIsLoading(false);
+   }
+  };
+
+  fetchAnalytics();
+  return () => clearInterval(timer);
  }, []);
 
  const today = useMemo(() => {
@@ -371,15 +420,15 @@ export function DashboardOverview() {
  {today} &middot; {currentTime}
  </p>
  <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mt-3 leading-relaxed max-w-xl">
- Today you received{" "}
- <span className="text-green-600 dark:text-green-400">
- 12 new bookings
- </span>
- , earned{" "}
- <span className="text-green-600 dark:text-green-400">
- $3,240.00
- </span>
- , and sold{" "}
+  Today you received{" "}
+  <span className="text-green-600 dark:text-green-400">
+  {analytics?.todayBookings || 0} new bookings
+  </span>
+  , earned{" "}
+  <span className="text-green-600 dark:text-green-400">
+  ${analytics?.monthlyRevenue?.toLocaleString() || "0"}
+  </span>
+  , and sold{" "}
  <span className="text-green-600 dark:text-green-400">
  8 premium articles
  </span>
@@ -569,65 +618,79 @@ export function DashboardOverview() {
 
  {/* 4. Booking Analytics */}
  <motion.div
- variants={itemVariants}
- className="bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-[#1a1a1f] p-6 shadow-sm"
+  variants={itemVariants}
+  className="bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-[#1a1a1f] p-6 shadow-sm"
  >
- <div className="flex items-center justify-between mb-6">
- <div>
- <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
- Booking Analytics
- </h4>
- <p className="text-sm font-extrabold text-slate-900 dark:text-white mt-1">
- {bookingAnalytics.reduce((s, b) => s + b.count, 0)} total bookings
- </p>
- </div>
- <Link
- href="/admin/bookings"
- className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-0.5"
- >
- <span>View all</span>
- <ChevronRight className="h-3.5 w-3.5" />
- </Link>
- </div>
- <div className="h-64">
- <ResponsiveContainer width="100%" height="100%">
- <BarChart
- data={bookingAnalytics}
- margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
- >
- <CartesianGrid
- strokeDasharray="3 3"
- stroke="#e2e8f0"
- vertical={false}
- />
- <XAxis
- dataKey="status"
- tick={{ fontSize: 10, fontWeight: 600, fill: "#94a3b8" }}
- axisLine={false}
- tickLine={false}
- />
- <YAxis
- tick={{ fontSize: 10, fontWeight: 600, fill: "#94a3b8" }}
- axisLine={false}
- tickLine={false}
- />
- <RechartsTooltip
- contentStyle={{
- background: "#fff",
- border: "1px solid #e2e8f0",
- borderRadius: "0",
- fontSize: "11px",
- fontWeight: 700,
- }}
- />
- <Bar dataKey="count" radius={[2, 2, 0, 0]} barSize={48}>
- {bookingAnalytics.map((entry) => (
- <Cell key={entry.status} fill={entry.color} />
- ))}
- </Bar>
- </BarChart>
- </ResponsiveContainer>
- </div>
+  <div className="flex items-center justify-between mb-6">
+  <div>
+  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+  Booking Analytics
+  </h4>
+  <p className="text-sm font-extrabold text-slate-900 dark:text-white mt-1">
+  {analytics ? `${analytics.totalBookings} total bookings` : "Loading..."}
+  </p>
+  </div>
+  <Link
+  href="/admin/bookings"
+  className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-0.5"
+  >
+  <span>View all</span>
+  <ChevronRight className="h-3.5 w-3.5" />
+  </Link>
+  </div>
+  <div className="h-64">
+  <ResponsiveContainer width="100%" height="100%">
+  <BarChart
+  data={analytics?.statusDistribution?.map((s) => ({
+   status: s.status.charAt(0).toUpperCase() + s.status.slice(1).replace(/_/g, " "),
+   count: s.count,
+   color: s.status === "pending" ? "#f59e0b" :
+          s.status === "approved" ? "#3b82f6" :
+          s.status === "completed" ? "#22c55e" :
+          s.status === "cancelled" ? "#ef4444" :
+          s.status === "rescheduled" ? "#8b5cf6" : "#64748b",
+  })) || []}
+  margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+  >
+  <CartesianGrid
+  strokeDasharray="3 3"
+  stroke="#e2e8f0"
+  vertical={false}
+  />
+  <XAxis
+  dataKey="status"
+  tick={{ fontSize: 10, fontWeight: 600, fill: "#94a3b8" }}
+  axisLine={false}
+  tickLine={false}
+  />
+  <YAxis
+  tick={{ fontSize: 10, fontWeight: 600, fill: "#94a3b8" }}
+  axisLine={false}
+  tickLine={false}
+  />
+  <RechartsTooltip
+  contentStyle={{
+   background: "#fff",
+   border: "1px solid #e2e8f0",
+   borderRadius: "0",
+   fontSize: "11px",
+   fontWeight: 700,
+  }}
+  />
+  <Bar dataKey="count" radius={[2, 2, 0, 0]} barSize={48}>
+  {analytics?.statusDistribution?.map((s) => (
+   <Cell key={s.status} fill={
+    s.status === "pending" ? "#f59e0b" :
+    s.status === "approved" ? "#3b82f6" :
+    s.status === "completed" ? "#22c55e" :
+    s.status === "cancelled" ? "#ef4444" :
+    s.status === "rescheduled" ? "#8b5cf6" : "#64748b"
+   } />
+  )) || []}
+  </Bar>
+  </BarChart>
+  </ResponsiveContainer>
+  </div>
  </motion.div>
 
  {/* 5. Service Performance */}
@@ -747,63 +810,63 @@ export function DashboardOverview() {
 
  {/* 7. Recent Bookings Table */}
  <div className="bg-white dark:bg-[#0c0c0e] border border-slate-200 dark:border-[#1a1a1f] p-6 shadow-sm">
- <div className="flex items-center justify-between mb-6">
- <div>
- <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
- Recent Bookings
- </h4>
- <p className="text-sm font-extrabold text-slate-900 dark:text-white mt-1">
- {recentBookings.length} entries
- </p>
- </div>
- <Link
- href="/admin/bookings"
- className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-0.5"
- >
- <span>View all</span>
- <ChevronRight className="h-3.5 w-3.5" />
- </Link>
- </div>
- <div className="overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 dark:border-[#1a1a1f] text-slate-400 font-bold uppercase tracking-wider text-[9px]">
- <th className="pb-3 pr-2">ID</th>
- <th className="pb-3 pr-2">Customer</th>
- <th className="pb-3 pr-2">Service</th>
- <th className="pb-3 pr-2">Deadline</th>
- <th className="pb-3 pr-2">Budget</th>
- <th className="pb-3 pr-2">Consultant</th>
- <th className="pb-3 pr-2">Status</th>
- <th className="pb-3 text-right">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f] text-slate-700 dark:text-slate-300">
- {recentBookings.slice(0, 5).map((bk) => (
- <tr
- key={bk.id}
- className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors"
- >
- <td className="py-3 pr-2 font-mono text-[10px] text-slate-500">
- {bk.id}
- </td>
- <td className="py-3 pr-2 font-bold text-slate-900 dark:text-white whitespace-nowrap">
- {bk.customer}
- </td>
- <td className="py-3 pr-2 font-semibold truncate max-w-[120px]">
- {bk.service}
- </td>
- <td className="py-3 pr-2 text-slate-500 dark:text-slate-450 whitespace-nowrap">
- {bk.deadline}
- </td>
- <td className="py-3 pr-2 font-bold text-slate-900 dark:text-white whitespace-nowrap">
- {bk.budget}
- </td>
- <td className="py-3 pr-2 text-slate-500 dark:text-slate-400 text-[10px] whitespace-nowrap">
- {bk.consultant}
- </td>
- <td className="py-3 pr-2">
- <StatusBadge status={bk.status} />
+  <div className="flex items-center justify-between mb-6">
+  <div>
+  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+  Recent Bookings
+  </h4>
+  <p className="text-sm font-extrabold text-slate-900 dark:text-white mt-1">
+  {analytics?.upcomingBookings?.length || 0} upcoming bookings
+  </p>
+  </div>
+  <Link
+  href="/admin/bookings"
+  className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-0.5"
+  >
+  <span>View all</span>
+  <ChevronRight className="h-3.5 w-3.5" />
+  </Link>
+  </div>
+  <div className="overflow-x-auto">
+  <table className="w-full text-left border-collapse text-xs">
+  <thead>
+  <tr className="border-b border-slate-200 dark:border-[#1a1a1f] text-slate-400 font-bold uppercase tracking-wider text-[9px]">
+  <th className="pb-3 pr-2">ID</th>
+  <th className="pb-3 pr-2">Client</th>
+  <th className="pb-3 pr-2">Service</th>
+  <th className="pb-3 pr-2">Date</th>
+  <th className="pb-3 pr-2">Time</th>
+  <th className="pb-3 pr-2">Consultant</th>
+  <th className="pb-3 pr-2">Status</th>
+  <th className="pb-3 text-right">Action</th>
+  </tr>
+  </thead>
+  <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f] text-slate-700 dark:text-slate-300">
+  {analytics?.upcomingBookings?.slice(0, 5).map((bk) => (
+  <tr
+  key={bk.bookingId}
+  className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors"
+  >
+  <td className="py-3 pr-2 font-mono text-[10px] text-slate-500">
+  {bk.bookingId}
+  </td>
+  <td className="py-3 pr-2 font-bold text-slate-900 dark:text-white whitespace-nowrap">
+  {bk.name}
+  </td>
+  <td className="py-3 pr-2 font-semibold truncate max-w-[120px]">
+  {bk.service}
+  </td>
+  <td className="py-3 pr-2 text-slate-500 dark:text-slate-450 whitespace-nowrap">
+  {new Date(bk.preferredDate).toLocaleDateString()}
+  </td>
+  <td className="py-3 pr-2 text-slate-500 dark:text-slate-450 whitespace-nowrap">
+  {bk.preferredTime}
+  </td>
+  <td className="py-3 pr-2 text-slate-500 dark:text-slate-400 text-[10px] whitespace-nowrap">
+  {bk.assignedConsultant?.name || "Unassigned"}
+  </td>
+  <td className="py-3 pr-2">
+  <StatusBadge status={bk.status.charAt(0).toUpperCase() + bk.status.slice(1).replace(/_/g, " ")} />
  </td>
  <td className="py-3 text-right">
  <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors">

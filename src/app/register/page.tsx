@@ -2,14 +2,40 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [agree, setAgree] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { register } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!agree) {
+      setError("You must agree to the Terms of Service and Privacy Policy");
+      return;
+    }
+    setLoading(true);
+    const result = await register(name, email, password);
+    if (result.success) {
+      router.push("/account");
+    } else {
+      setError(result.message);
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-[440px]">
-        {/* Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center bg-[#7c3aed] text-white shadow-lg mb-4">
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
@@ -20,17 +46,24 @@ export default function RegisterPage() {
           <p className="text-sm text-slate-500 mt-1">Get started with your free account</p>
         </div>
 
-        {/* Card */}
         <div className="bg-white border border-slate-200 shadow-sm p-8">
-          <form className="space-y-5">
+          {error && (
+            <div className="mb-5 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+              {error}
+            </div>
+          )}
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                 Full name
               </label>
               <input
                 type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
                 placeholder="Jane Doe"
+                required
               />
             </div>
 
@@ -40,8 +73,11 @@ export default function RegisterPage() {
               </label>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
                 placeholder="you@example.com"
+                required
               />
             </div>
 
@@ -52,8 +88,11 @@ export default function RegisterPage() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400 pr-11"
                   placeholder="Create a strong password"
+                  required
                 />
                 <button
                   type="button"
@@ -75,7 +114,12 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex items-start gap-2">
-              <input type="checkbox" className="mt-0.5 h-4 w-4 border-slate-300 text-[#7c3aed] focus:ring-[#7c3aed]" />
+              <input
+                type="checkbox"
+                checked={agree}
+                onChange={(e) => setAgree(e.target.checked)}
+                className="mt-0.5 h-4 w-4 border-slate-300 text-[#7c3aed] focus:ring-[#7c3aed]"
+              />
               <span className="text-xs text-slate-500">
                 I agree to the{" "}
                 <Link href="/terms" className="font-bold text-[#7c3aed] hover:underline">Terms of Service</Link>{" "}
@@ -84,13 +128,16 @@ export default function RegisterPage() {
               </span>
             </div>
 
-            <button className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm">
-              Create account
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm disabled:opacity-50"
+            >
+              {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
         </div>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-slate-500">
           Already have an account?{" "}
           <Link href="/login" className="font-bold text-[#7c3aed] hover:underline">

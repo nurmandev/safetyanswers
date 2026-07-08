@@ -2,14 +2,36 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { api } from "@/lib/api-client";
 
 export default function ForgotPasswordPage() {
+  const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    const res = await api.post("/auth/forgot-password", { email });
+    if (res.success) {
+      setSent(true);
+    } else {
+      setError(res.message);
+    }
+    setLoading(false);
+  };
+
+  const resendEmail = async () => {
+    setLoading(true);
+    await api.post("/auth/forgot-password", { email });
+    setLoading(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-[440px]">
-        {/* Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex h-14 w-14 items-center justify-center bg-[#7c3aed] text-white shadow-lg mb-4">
             <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
@@ -22,8 +44,12 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        {/* Card */}
         <div className="bg-white border border-slate-200 shadow-sm p-8">
+          {error && (
+            <div className="mb-5 p-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
+              {error}
+            </div>
+          )}
           {sent ? (
             <div className="text-center py-4">
               <div className="inline-flex h-14 w-14 items-center justify-center bg-green-50 text-green-600 mb-4">
@@ -35,33 +61,40 @@ export default function ForgotPasswordPage() {
                 We&apos;ve sent a password reset link to your email. Please check your inbox and follow the instructions.
               </p>
               <button
-                onClick={() => setSent(false)}
-                className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm"
+                onClick={resendEmail}
+                disabled={loading}
+                className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm disabled:opacity-50"
               >
-                Send again
+                {loading ? "Sending..." : "Send again"}
               </button>
             </div>
           ) : (
-            <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); setSent(true); }}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-slate-700">
                   Email address
                 </label>
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
                   placeholder="you@example.com"
+                  required
                 />
               </div>
 
-              <button className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm">
-                Send reset link
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#7c3aed] py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-all shadow-sm disabled:opacity-50"
+              >
+                {loading ? "Sending..." : "Send reset link"}
               </button>
             </form>
           )}
         </div>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-slate-500">
           Remember your password?{" "}
           <Link href="/login" className="font-bold text-[#7c3aed] hover:underline">
