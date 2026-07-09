@@ -112,6 +112,7 @@ export function AccountLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { user, loading, logout } = useAuth();
   const router = useRouter();
 
@@ -148,27 +149,28 @@ export function AccountLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-full bg-white border-r border-slate-100 z-40 transition-all duration-300 ease-out shadow-2xl flex flex-col shrink-0 ${
+        className={`fixed left-0 top-0 h-full bg-white border-r border-slate-100 z-40 transition-all duration-300 ease-in-out shadow-2xl lg:shadow-none flex flex-col overflow-hidden shrink-0 ${
           sidebarOpen
             ? "w-full sm:w-[280px] lg:w-60 translate-x-0"
-            : "-translate-x-full lg:w-0"
+            : "-translate-x-full lg:translate-x-0 lg:w-20"
         }`}
       >
         {/* Sidebar logo */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-          <Link href="/account" className="flex items-center gap-2.5 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center bg-[#7c3aed] text-white">
+        <div className={`flex items-center h-16 shrink-0 border-b border-slate-200/60 transition-all duration-300 overflow-hidden ${sidebarOpen ? "justify-between px-4" : "justify-center px-0"}`}>
+          <Link href="/account" className="flex items-center gap-2.5 shrink-0" title="Dashboard">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#7c3aed] text-white shadow-sm">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l8.982-11.795m-9 0L9.814 4.096 9.813 4.1a.75.75 0 011.396-.135L21 21M9.813 15.904L21 21m-11.188-5.096A9.75 9.75 0 013 12c0-5.385 4.365-9.75 9.75-9.75 2.11 0 4.06.669 5.64 1.8" />
               </svg>
             </div>
-            <span className="text-base font-bold tracking-tight text-[#0f172a]">
+            <span className={`text-base font-bold tracking-tight text-[#0f172a] transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0 hidden"}`}>
               safetyanswers
             </span>
           </Link>
+          
           <button
             onClick={() => setSidebarOpen(false)}
-            className="flex h-7 w-7 items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            className={`flex h-7 w-7 shrink-0 items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors lg:hidden ${!sidebarOpen ? "hidden" : ""}`}
             title="Close sidebar"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
@@ -178,51 +180,57 @@ export function AccountLayout({
         </div>
 
         {/* Sidebar nav */}
-        <div className="flex-1 overflow-y-auto p-4 pt-2">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 px-3">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 pt-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300">
+          <p className={`text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "px-3" : "opacity-0 h-0 overflow-hidden mb-0"}`}>
             Menu
           </p>
-          <nav className="space-y-0.5">
+          <nav className="space-y-1">
             {overviewLinks.map((item) => {
               const isActive = currentPath === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) setSidebarOpen(false);
+                  }}
+                  title={!sidebarOpen ? item.label : undefined}
                   className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold transition-all ${
                     isActive
-                      ? "bg-[#7c3aed] text-white"
+                      ? "bg-[#7c3aed] text-white shadow-sm"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-                  }`}
+                  } ${!sidebarOpen ? "justify-center px-0" : ""}`}
                 >
                   <span className="flex-shrink-0">{item.icon}</span>
-                  <span>{item.label}</span>
+                  <span className={`transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0 hidden"}`}>{item.label}</span>
                 </Link>
               );
             })}
           </nav>
 
           <div className="mt-6 pt-4 border-t border-slate-100">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 px-3">
+            <p className={`text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "px-3" : "opacity-0 h-0 overflow-hidden mb-0"}`}>
               Account
             </p>
-            <nav className="space-y-0.5">
+            <nav className="space-y-1">
               {settingsLinks.map((item) => {
                 const isActive = currentPath === item.href;
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={() => {
+                      if (window.innerWidth < 1024) setSidebarOpen(false);
+                    }}
+                    title={!sidebarOpen ? item.label : undefined}
                     className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold transition-all ${
                       isActive
-                        ? "bg-[#7c3aed] text-white"
+                        ? "bg-[#7c3aed] text-white shadow-sm"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
-                    }`}
+                    } ${!sidebarOpen ? "justify-center px-0" : ""}`}
                   >
                     <span className="flex-shrink-0">{item.icon}</span>
-                    <span>{item.label}</span>
+                    <span className={`transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0 hidden"}`}>{item.label}</span>
                   </Link>
                 );
               })}
@@ -231,12 +239,13 @@ export function AccountLayout({
                   setSidebarOpen(false);
                   logout();
                 }}
-                className="flex w-full items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-all"
+                title={!sidebarOpen ? "Logout" : undefined}
+                className={`flex w-full items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-all ${!sidebarOpen ? "justify-center px-0" : ""}`}
               >
                 <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                 </svg>
-                <span>Logout</span>
+                <span className={`transition-all duration-300 whitespace-nowrap ${sidebarOpen ? "opacity-100 w-auto" : "opacity-0 w-0 hidden"}`}>Logout</span>
               </button>
             </nav>
           </div>
@@ -244,74 +253,125 @@ export function AccountLayout({
       </aside>
 
       {/* Main content area */}
-      <div className={`flex-1 flex flex-col min-h-0 min-w-0 transition-all duration-300 ${sidebarOpen ? "lg:ml-60" : "lg:ml-0"}`}>
-        {/* Navbar */}
-        <header className="sticky top-0 z-20 bg-white border-b border-slate-100 flex items-center gap-2 px-3 sm:px-5 h-12 sm:h-14 shrink-0">
-          {/* Sidebar toggle */}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="flex h-8 w-8 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
-          >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
-
-          {/* Logo */}
-          <Link href="/account" className="flex items-center gap-2 shrink-0">
-            <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center bg-[#7c3aed] text-white">
-              <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l8.982-11.795m-9 0L9.814 4.096 9.813 4.1a.75.75 0 011.396-.135L21 21M9.813 15.904L21 21m-11.188-5.096A9.75 9.75 0 013 12c0-5.385 4.365-9.75 9.75-9.75 2.11 0 4.06.669 5.64 1.8" />
+      <div className={`flex-1 flex flex-col min-h-0 min-w-0 transition-all duration-300 ease-in-out ${sidebarOpen ? "lg:ml-60" : "lg:ml-20"}`}>
+        {/* Premium Navbar */}
+        <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-4 sm:px-6 h-16 shrink-0 transition-all">
+          {/* Left section: Sidebar toggle */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100/80 hover:text-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-[#7c3aed]/20"
+              aria-label="Toggle Sidebar"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
               </svg>
-            </div>
-            <span className="text-sm sm:text-base font-bold tracking-tight text-[#0f172a] hidden sm:block">
-              safetyanswers
-            </span>
-          </Link>
+            </button>
+          </div>
 
-          {/* Search */}
-          <div className="flex-1 max-w-sm sm:max-w-md mx-auto">
-            <div className="relative">
-              <span className="absolute inset-y-0 left-2.5 flex items-center text-slate-400">
-                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+          {/* Mobile Search Modal moved to root for full-page coverage */}
+
+          {/* Center section: Search */}
+          <div className="flex-1 max-w-xl mx-auto px-4 hidden sm:block">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-slate-400 group-focus-within:text-[#7c3aed] transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
                 </svg>
-              </span>
+              </div>
               <input
                 type="text"
-                placeholder="Search..."
-                className="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
+                placeholder="Search resources, bookings..."
+                className="w-full pl-10 pr-12 py-2 bg-slate-50/50 hover:bg-slate-100/50 border border-slate-200/80 text-sm text-slate-700 focus:outline-none focus:bg-white focus:border-[#7c3aed]/40 focus:ring-4 focus:ring-[#7c3aed]/10 transition-all placeholder:text-slate-400"
               />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <span className="hidden lg:flex items-center justify-center px-1.5 h-5 text-[10px] font-medium text-slate-400 bg-white border border-slate-200 shadow-sm">
+                  ⌘K
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* User / Logout */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center bg-[#7c3aed] text-white text-[11px] font-bold">
-                {user.name?.charAt(0)?.toUpperCase() || "U"}
-              </div>
-              <span className="text-[11px] font-bold text-slate-700 max-w-[80px] truncate">
-                {user.name}
-              </span>
-            </div>
-            <button
-              onClick={() => logout()}
-              className="flex h-8 w-8 items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-              title="Logout"
+          {/* Right section: Actions & User */}
+          <div className="flex items-center gap-3 sm:gap-5 shrink-0">
+            {/* Mobile search button */}
+            <button 
+              onClick={() => setMobileSearchOpen(true)}
+              className="sm:hidden flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
             >
-              <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
               </svg>
             </button>
+
+            {/* Notification Bell Removed */}
+
+            <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+            {/* User Profile */}
+            <div className="flex items-center gap-3 pl-1 sm:pl-0">
+              <div className="flex flex-col items-end hidden sm:flex">
+                <span className="text-sm font-semibold text-slate-700 leading-none">
+                  {user.name}
+                </span>
+                <span className="text-[11px] font-medium text-slate-500 mt-1">
+                  Client Account
+                </span>
+              </div>
+              <div className="relative h-9 w-9 bg-gradient-to-tr from-[#7c3aed] to-[#a78bfa] flex items-center justify-center text-white text-sm font-bold shadow-sm ring-2 ring-white cursor-pointer hover:ring-[#7c3aed]/20 transition-all">
+                {user.name?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+              
+              <button
+                onClick={() => logout()}
+                className="ml-1 flex h-8 w-8 items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                title="Logout"
+              >
+                <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                </svg>
+              </button>
+            </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 px-3 sm:px-5 lg:px-6 pb-3 sm:pb-5 lg:pb-6 overflow-y-auto">
+        <main className="flex-1 px-3 sm:px-5 lg:px-6 pt-4 sm:pt-6 lg:pt-8 pb-3 sm:pb-5 lg:pb-6 overflow-y-auto">
           {children}
         </main>
       </div>
+
+      {/* Mobile Search Modal */}
+      {mobileSearchOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh] px-4 bg-slate-950/60 backdrop-blur-sm sm:hidden">
+          <div className="w-full max-w-sm bg-white p-4 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-slate-800">Search</h3>
+              <button 
+                onClick={() => setMobileSearchOpen(false)}
+                className="flex h-8 w-8 shrink-0 items-center justify-center text-slate-400 hover:bg-slate-100 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
+                </svg>
+              </div>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Search..."
+                className="w-full pl-9 pr-3 py-3 bg-slate-50 border border-slate-200 text-base text-slate-700 focus:outline-none focus:border-[#7c3aed]/40 focus:ring-2 focus:ring-[#7c3aed]/10 transition-all placeholder:text-slate-400"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -12,7 +12,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isPortal && <NotchNavbar />}
-      <div className="flex-1 flex flex-col pt-16">{children}</div>
+      <div className={`flex-1 flex flex-col ${isPortal ? "" : "pt-16"}`}>{children}</div>
       {!isPortal && <Footer />}
       <ScrollToTop />
     </>
