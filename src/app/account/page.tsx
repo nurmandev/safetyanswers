@@ -370,56 +370,10 @@ export default function AccountPage() {
  </Card>
  </motion.div>
 
- {/* 6. Recent Payments */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="Recent Payments" href="/account/payments" />
- <Card className="p-6 text-center">
- <CreditCard className="h-8 w-8 mx-auto text-slate-300 mb-2" />
- <p className="text-xs text-slate-400">Payment history will appear here</p>
- </Card>
- </motion.div>
-
   </div>
 
   {/* Right Column - Sidebar */}
   <div className="lg:col-span-4 space-y-4 sm:space-y-6 lg:space-y-8">
-  {/* Upcoming Deadlines */}
-  <motion.div variants={itemVariants}>
-  <SectionHeader title="Upcoming Deadlines" />
-  <Card className="p-5">
-  <div className="space-y-4">
-  {upcomingBookings.length === 0 ? (
-    <div className="text-center py-4">
-      <Calendar className="h-6 w-6 mx-auto text-slate-300 mb-2" />
-      <p className="text-xs text-slate-400">No upcoming deadlines</p>
-    </div>
-  ) : (
-    upcomingBookings.slice(0, 3).map((b, i) => (
-      <div
-        key={i}
-        className="flex items-start gap-3 pb-4 border-b border-slate-100 dark:border-[#1a1a1f] last:border-0 last:pb-0"
-      >
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-purple-50 dark:bg-purple-950/20 text-[#7c3aed]">
-          <Calendar className="h-4.5 w-4.5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold text-slate-900 dark:text-white">
-            {b.title}
-          </p>
-          <p className="text-[10px] text-slate-400 mt-0.5">
-            {new Date(b.preferredDate).toLocaleDateString()} at {b.preferredTime}
-          </p>
-        </div>
-        <span className="shrink-0 text-[9px] font-bold px-2 py-0.5 border bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900 dark:text-blue-400">
-          {b.meetingType}
-        </span>
-      </div>
-    ))
-  )}
-  </div>
-  </Card>
-  </motion.div>
-
   {/* Profile Summary */}
  <motion.div variants={itemVariants}>
  <SectionHeader title="Profile Summary" />

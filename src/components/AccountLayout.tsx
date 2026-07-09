@@ -164,7 +164,7 @@ export function AccountLayout({
                   key={item.href}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold transition-all rounded-lg ${
+                  className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold transition-all ${
                     isActive
                       ? "bg-[#7c3aed] text-white"
                       : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
@@ -189,7 +189,7 @@ export function AccountLayout({
                     key={item.href}
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold transition-all rounded-lg ${
+                    className={`flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold transition-all ${
                       isActive
                         ? "bg-[#7c3aed] text-white"
                         : "text-slate-500 hover:bg-slate-50 hover:text-slate-800"
@@ -205,7 +205,7 @@ export function AccountLayout({
                   setSidebarOpen(false);
                   logout();
                 }}
-                className="flex w-full items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-all rounded-lg"
+                className="flex w-full items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-red-500 hover:bg-red-50 transition-all"
               >
                 <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
@@ -224,7 +224,7 @@ export function AccountLayout({
           {/* Mobile menu button */}
           <button
             onClick={() => setSidebarOpen(true)}
-            className="lg:hidden flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100 rounded-lg transition-colors"
+            className="lg:hidden flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -254,7 +254,7 @@ export function AccountLayout({
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-sm text-slate-700 rounded-lg focus:outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -271,7 +271,7 @@ export function AccountLayout({
             </div>
             <button
               onClick={() => logout()}
-              className="flex h-9 w-9 items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex h-9 w-9 items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
               title="Logout"
             >
               <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
