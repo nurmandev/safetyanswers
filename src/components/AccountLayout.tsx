@@ -111,7 +111,7 @@ export function AccountLayout({
   currentPath: string;
   children: React.ReactNode;
 }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { user, loading, logout } = useAuth();
   const router = useRouter();
 
@@ -138,7 +138,7 @@ export function AccountLayout({
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden">
-      {/* Mobile overlay */}
+      {/* Sidebar overlay (mobile only) */}
       {sidebarOpen && (
         <div
           className="lg:hidden fixed inset-0 z-30 bg-slate-950/55 backdrop-blur-sm"
@@ -148,14 +148,27 @@ export function AccountLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky lg:top-0 left-0 h-screen w-[75vw] max-w-[280px] bg-white border-r border-slate-100 z-40 lg:z-auto transition-transform duration-300 ease-out shadow-2xl lg:shadow-none flex flex-col shrink-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } lg:w-60`}
+        className={`fixed lg:sticky lg:top-0 left-0 h-screen bg-white border-r border-slate-100 z-40 lg:z-auto transition-all duration-300 ease-out shadow-2xl lg:shadow-none flex flex-col shrink-0 ${
+          sidebarOpen
+            ? "w-[75vw] max-w-[280px] lg:w-60 translate-x-0"
+            : "w-0 -translate-x-full lg:translate-x-0 lg:w-0 overflow-hidden"
+        }`}
       >
         <div className="flex-1 overflow-y-auto p-4 pt-20 lg:pt-6">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 px-3">
-            Menu
-          </p>
+          <div className="flex items-center justify-between mb-6 px-1">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
+              Menu
+            </p>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="flex h-7 w-7 items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+              title="Close sidebar"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+              </svg>
+            </button>
+          </div>
           <nav className="space-y-0.5">
             {overviewLinks.map((item) => {
               const isActive = currentPath === item.href;
@@ -221,10 +234,10 @@ export function AccountLayout({
       <div className="flex-1 flex flex-col min-h-screen min-w-0 lg:overflow-hidden">
         {/* Navbar */}
         <header className="sticky top-0 z-20 bg-white border-b border-slate-100 flex items-center gap-3 px-4 sm:px-6 h-14 shrink-0">
-          {/* Mobile menu button */}
+          {/* Sidebar toggle */}
           <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
