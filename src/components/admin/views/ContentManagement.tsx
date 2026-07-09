@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { premiumApi, PremiumArticle, ArticleCategory as PremiumCategory } from "@/lib/premium";
 import {
  Search,
  Plus,
@@ -41,19 +42,56 @@ const mockTags = [
 ];
 
 export function ContentManagement({ tab }: { tab: "posts" | "premium" | "categories" | "tags" }) {
- const [activeTab, setActiveTab] = useState(tab);
- const [searchQuery, setSearchQuery] = useState("");
- 
- // Blog form modal state
- const [showFormModal, setShowFormModal] = useState(false);
- const [editingPost, setEditingPost] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState(tab);
+  const [searchQuery, setSearchQuery] = useState("");
 
- // Form states
- const [title, setTitle] = useState("");
- const [category, setCategory] = useState("Academic Support");
- const [status, setStatus] = useState("Draft");
- const [isPremium, setIsPremium] = useState(false);
- const [price, setPrice] = useState("$29.00");
+  // Premium API data
+  const [premiumArticles, setPremiumArticles] = useState<PremiumArticle[]>([]);
+  const [premiumCategories, setPremiumCategories] = useState<PremiumCategory[]>([]);
+  const [premiumLoading, setPremiumLoading] = useState(false);
+  const [premiumPage, setPremiumPage] = useState(1);
+  const [premiumTotal, setPremiumTotal] = useState(0);
+  
+  // Blog form modal state
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [editingPost, setEditingPost] = useState<any>(null);
+
+  // Form states
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Academic Support");
+  const [status, setStatus] = useState("Draft");
+  const [isPremium, setIsPremium] = useState(false);
+  const [price, setPrice] = useState("$29.00");
+
+  useEffect(() => {
+    if (activeTab === "premium") {
+      (async () => {
+        setPremiumLoading(true);
+        try {
+          const [artRes, catRes] = await Promise.all([
+            premiumApi.adminGetArticles({ page: premiumPage, limit: 10, search: searchQuery || undefined }),
+            premiumApi.getCategories(),
+          ]);
+          if (artRes.success) {
+            setPremiumArticles(artRes.data.articles);
+            setPremiumTotal(artRes.data.pagination.total);
+          }
+          if (catRes.success) {
+            setPremiumCategories(catRes.data.categories);
+          }
+        } catch {} finally {
+          setPremiumLoading(false);
+        }
+      })();
+    } else if (activeTab === "categories") {
+      (async () => {
+        try {
+          const catRes = await premiumApi.getCategories();
+          if (catRes.success) setPremiumCategories(catRes.data.categories);
+        } catch {}
+      })();
+    }
+  }, [activeTab, premiumPage]);
 
  const handleEditPost = (post: any) => {
  setEditingPost(post);
@@ -120,16 +158,22 @@ export function ContentManagement({ tab }: { tab: "posts" | "premium" | "categor
  />
  </div>
 
- {activeTab === "posts" && (
- <button
- onClick={handleCreatePost}
- className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-bold hover:opacity-90 transition-all shadow-sm"
- >
- <Plus className="h-3.5 w-3.5" />
- <span>Create Article</span>
- </button>
- )}
- {activeTab === "categories" && (
+  {activeTab === "posts" && (
+  <button
+  onClick={handleCreatePost}
+  className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-bold hover:opacity-90 transition-all shadow-sm"
+  >
+  <Plus className="h-3.5 w-3.5" />
+  <span>Create Article</span>
+  </button>
+  )}
+  {activeTab === "premium" && (
+  <button className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-bold hover:opacity-90 transition-all shadow-sm">
+  <Plus className="h-3.5 w-3.5" />
+  <span>Add Premium Article</span>
+  </button>
+  )}
+  {activeTab === "categories" && (
  <button className="flex items-center gap-1.5 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-950 text-xs font-bold hover:opacity-90 transition-all shadow-sm">
  <Plus className="h-3.5 w-3.5" />
  <span>Add Category</span>
@@ -205,72 +249,88 @@ export function ContentManagement({ tab }: { tab: "posts" | "premium" | "categor
  </div>
  )}
 
- {activeTab === "premium" && (
- <div className="overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 dark:border-[#1a1a1f] bg-slate-50 dark:bg-[#121215] text-slate-450 dark:text-slate-500 font-bold uppercase tracking-wider text-[9px]">
- <th className="py-4 px-6">Document Title</th>
- <th className="py-4 px-6">Pricing</th>
- <th className="py-4 px-6">Preview Length</th>
- <th className="py-4 px-6">Unlock Status</th>
- <th className="py-4 px-6">Purchases</th>
- <th className="py-4 px-6">Revenue</th>
- <th className="py-4 px-6 text-right">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f] text-slate-700 dark:text-slate-300">
- {mockPosts.filter(p => p.premium).map((art) => (
- <tr key={art.id} className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors">
- <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">{art.title}</td>
- <td className="py-4 px-6 font-bold text-blue-600 dark:text-blue-400">{art.price}</td>
- <td className="py-4 px-6 font-medium text-slate-550">First 3 paragraphs (Teaser blur)</td>
- <td className="py-4 px-6">
- <span className="inline-block px-2.5 py-0.5 text-[9px] font-extrabold border bg-green-50 border-green-200 text-green-700 dark:bg-green-950/20 dark:text-green-400 dark:border-green-900">
- Active Locks
- </span>
- </td>
- <td className="py-4 px-6 font-bold">12 unlocks</td>
- <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">$468.00</td>
- <td className="py-4 px-6 text-right">
- <button onClick={() => handleEditPost(art)} className="inline-flex h-8 px-4 items-center justify-center border border-slate-200 dark:border-[#1e1e24] hover:border-slate-800 text-[11px] font-bold transition-all">Configure</button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- )}
+  {activeTab === "premium" && (
+  <div className="overflow-x-auto">
+  <table className="w-full text-left border-collapse text-xs">
+  <thead>
+  <tr className="border-b border-slate-200 dark:border-[#1a1a1f] bg-slate-50 dark:bg-[#121215] text-slate-450 dark:text-slate-500 font-bold uppercase tracking-wider text-[9px]">
+  <th className="py-4 px-6">Document Title</th>
+  <th className="py-4 px-6">Pricing</th>
+  <th className="py-4 px-6">Category</th>
+  <th className="py-4 px-6">Status</th>
+  <th className="py-4 px-6">Purchases</th>
+  <th className="py-4 px-6">Downloads</th>
+  <th className="py-4 px-6 text-right">Action</th>
+  </tr>
+  </thead>
+  <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f] text-slate-700 dark:text-slate-300">
+  {premiumLoading ? (
+    <tr><td colSpan={7} className="py-10 text-center text-slate-400 text-xs">Loading...</td></tr>
+  ) : premiumArticles.length === 0 ? (
+    <tr><td colSpan={7} className="py-10 text-center text-slate-400 text-xs">No premium articles found</td></tr>
+  ) : premiumArticles.map((art) => {
+    const catName = typeof art.category === "object" ? art.category?.name : "Uncategorized";
+    return (
+  <tr key={art._id} className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors">
+  <td className="py-4 px-6 font-bold text-slate-900 dark:text-white max-w-xs truncate">{art.title}</td>
+  <td className="py-4 px-6 font-bold text-blue-600 dark:text-blue-400">{art.currency} {art.price.toFixed(2)}{art.discount > 0 ? ` (-${art.discount}%)` : ""}</td>
+  <td className="py-4 px-6 font-medium text-slate-550">{catName}</td>
+  <td className="py-4 px-6">
+  <span className={`inline-block px-2.5 py-0.5 text-[9px] font-extrabold border ${art.status === "published" ? "bg-green-50 border-green-200 text-green-700 dark:bg-green-950/20" : art.status === "draft" ? "bg-slate-50 border-slate-200 text-slate-500" : "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/20"}`}>
+  {art.status}
+  </span>
+  </td>
+  <td className="py-4 px-6 font-bold">{art.purchaseCount || 0}</td>
+  <td className="py-4 px-6 font-bold">{art.downloadCount || 0}</td>
+  <td className="py-4 px-6 text-right">
+  <button onClick={() => handleEditPost(art)} className="inline-flex h-8 px-4 items-center justify-center border border-slate-200 dark:border-[#1e1e24] hover:border-slate-800 text-[11px] font-bold transition-all">Configure</button>
+  </td>
+  </tr>
+    );
+  })}
+  </tbody>
+  </table>
+  {premiumTotal > 10 && (
+    <div className="flex items-center justify-center gap-2 p-4 border-t border-slate-100">
+      <button disabled={premiumPage <= 1} onClick={() => setPremiumPage(p => p - 1)} className="px-3 py-1.5 text-[10px] font-bold border border-slate-200 hover:border-slate-800 disabled:opacity-30">Previous</button>
+      <span className="text-[10px] text-slate-400">Page {premiumPage}</span>
+      <button disabled={premiumArticles.length < 10} onClick={() => setPremiumPage(p => p + 1)} className="px-3 py-1.5 text-[10px] font-bold border border-slate-200 hover:border-slate-800 disabled:opacity-30">Next</button>
+    </div>
+  )}
+  </div>
+  )}
 
- {activeTab === "categories" && (
- <div className="overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 dark:border-[#1a1a1f] bg-slate-50 dark:bg-[#121215] text-slate-450 dark:text-slate-500 font-bold uppercase tracking-wider text-[9px]">
- <th className="py-4 px-6">Category Name</th>
- <th className="py-4 px-6">Slug Target</th>
- <th className="py-4 px-6">Description</th>
- <th className="py-4 px-6">Usage Count</th>
- <th className="py-4 px-6 text-right">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f] text-slate-700 dark:text-slate-300">
- {mockCategories.map((cat) => (
- <tr key={cat.name} className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors">
- <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">{cat.name}</td>
- <td className="py-4 px-6 font-mono text-[10px] text-blue-600 dark:text-blue-400">/{cat.slug}</td>
- <td className="py-4 px-6 text-slate-500 dark:text-slate-450 max-w-sm truncate font-semibold">{cat.desc}</td>
- <td className="py-4 px-6 font-bold">{cat.count} articles</td>
- <td className="py-4 px-6 text-right space-x-2">
- <button className="text-slate-500 hover:text-blue-600"><Edit2 className="h-4 w-4" /></button>
- <button className="text-slate-500 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- )}
+  {activeTab === "categories" && (
+  <div className="overflow-x-auto">
+  <table className="w-full text-left border-collapse text-xs">
+  <thead>
+  <tr className="border-b border-slate-200 dark:border-[#1a1a1f] bg-slate-50 dark:bg-[#121215] text-slate-450 dark:text-slate-500 font-bold uppercase tracking-wider text-[9px]">
+  <th className="py-4 px-6">Category Name</th>
+  <th className="py-4 px-6">Slug Target</th>
+  <th className="py-4 px-6">Description</th>
+  <th className="py-4 px-6">Sort Order</th>
+  <th className="py-4 px-6 text-right">Action</th>
+  </tr>
+  </thead>
+  <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f] text-slate-700 dark:text-slate-300">
+  {premiumCategories.length === 0 ? (
+    <tr><td colSpan={5} className="py-10 text-center text-slate-400 text-xs">No categories found</td></tr>
+  ) : premiumCategories.map((cat) => (
+  <tr key={cat._id} className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors">
+  <td className="py-4 px-6 font-bold text-slate-900 dark:text-white">{cat.name}</td>
+  <td className="py-4 px-6 font-mono text-[10px] text-blue-600 dark:text-blue-400">/{cat.slug}</td>
+  <td className="py-4 px-6 text-slate-500 dark:text-slate-450 max-w-sm truncate font-semibold">{cat.description || "-"}</td>
+  <td className="py-4 px-6 font-bold">{cat.sortOrder || 0}</td>
+  <td className="py-4 px-6 text-right space-x-2">
+  <button className="text-slate-500 hover:text-blue-600"><Edit2 className="h-4 w-4" /></button>
+  <button className="text-slate-500 hover:text-red-500"><Trash2 className="h-4 w-4" /></button>
+  </td>
+  </tr>
+  ))}
+  </tbody>
+  </table>
+  </div>
+  )}
 
  {activeTab === "tags" && (
  <div className="overflow-x-auto">
@@ -336,7 +396,7 @@ export function ContentManagement({ tab }: { tab: "posts" | "premium" | "categor
  onChange={(e) => setCategory(e.target.value)}
  className="w-full bg-slate-50 dark:bg-[#121215] border border-slate-200 dark:border-[#1a1a1f] px-4 py-3 focus:outline-none"
  >
- {mockCategories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+                  {premiumCategories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
  </select>
  </div>
  <div className="space-y-2">

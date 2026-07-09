@@ -13,6 +13,10 @@ import {
   adminNewBookingTemplate,
   bookingReminderTemplate,
 } from "../emails/templates/booking";
+import {
+  purchaseConfirmationTemplate,
+  adminPurchaseAlertTemplate,
+} from "../emails/templates/purchase";
 
 const transporter = nodemailer.createTransport({
   host: config.smtp.host,
@@ -155,6 +159,25 @@ export const EmailService = {
       `New Booking Request - ${data.bookingId}`,
       adminNewBookingTemplate(data)
     );
+  },
+
+  async sendPurchaseConfirmation(data: {
+    email: string;
+    name: string;
+    articleTitle: string;
+    amount: string;
+    invoiceNumber: string;
+  }) {
+    await sendMail(data.email, `Purchase Confirmed - ${data.articleTitle}`, purchaseConfirmationTemplate(data));
+  },
+
+  async sendAdminPurchaseAlert(data: {
+    email: string;
+    name: string;
+    articleTitle: string;
+    amount: string;
+  }) {
+    await sendMail(data.email, `New Purchase: ${data.articleTitle}`, adminPurchaseAlertTemplate(data));
   },
 
   async sendBookingReminder(data: {
