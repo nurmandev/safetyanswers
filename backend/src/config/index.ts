@@ -18,13 +18,13 @@ export const config = {
   jwt: {
     accessSecret: env("JWT_ACCESS_SECRET"),
     refreshSecret: env("JWT_REFRESH_SECRET"),
-    accessExpiresIn: env("JWT_ACCESS_EXPIRES_IN", "15m"),
+    accessExpiresIn: env("JWT_ACCESS_EXPIRES_IN", "24h"),
     refreshExpiresIn: env("JWT_REFRESH_EXPIRES_IN", "7d"),
   },
   adminJwt: {
     accessSecret: env("JWT_ADMIN_ACCESS_SECRET"),
     refreshSecret: env("JWT_ADMIN_REFRESH_SECRET"),
-    accessExpiresIn: env("JWT_ADMIN_ACCESS_EXPIRES_IN", "15m"),
+    accessExpiresIn: env("JWT_ADMIN_ACCESS_EXPIRES_IN", "24h"),
     refreshExpiresIn: env("JWT_ADMIN_REFRESH_EXPIRES_IN", "7d"),
   },
   cloudinary: {

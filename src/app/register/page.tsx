@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
-export default function RegisterPage() {
+function RegisterForm() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/account";
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,9 +29,11 @@ export default function RegisterPage() {
     setLoading(true);
     const result = await register(name, email, password);
     if (result.success) {
-      router.push("/account");
+      toast.success("Account created successfully");
+      router.push(redirect);
     } else {
       setError(result.message);
+      toast.error(result.message);
     }
     setLoading(false);
   };
@@ -146,5 +151,13 @@ export default function RegisterPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }

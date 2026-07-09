@@ -10,6 +10,17 @@ export interface IUserDocument extends Document {
   avatarPublicId?: string;
   country?: string;
   institution?: string;
+  company?: string;
+  jobTitle?: string;
+  address?: string;
+  state?: string;
+  city?: string;
+  bio?: string;
+  socialLinks?: {
+    linkedin?: string;
+    twitter?: string;
+    website?: string;
+  };
   isVerified: boolean;
   role: "user";
   refreshToken?: string;
@@ -47,7 +58,18 @@ const userSchema = new Schema<IUserDocument>(
     avatarPublicId: { type: String },
     country: { type: String, trim: true },
     institution: { type: String, trim: true },
-    isVerified: { type: Boolean, default: false },
+    company: { type: String, trim: true },
+    jobTitle: { type: String, trim: true },
+    address: { type: String, trim: true },
+    state: { type: String, trim: true },
+    city: { type: String, trim: true },
+    bio: { type: String, trim: true, maxlength: [1000, "Bio cannot exceed 1000 characters"] },
+    socialLinks: {
+      linkedin: { type: String, trim: true },
+      twitter: { type: String, trim: true },
+      website: { type: String, trim: true },
+    },
+    isVerified: { type: Boolean, default: true },
     role: { type: String, enum: ["user"], default: "user" },
     refreshToken: { type: String, select: false },
     passwordChangedAt: { type: Date },

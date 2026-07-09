@@ -8,6 +8,17 @@ export interface IUser {
   avatarPublicId?: string;
   country?: string;
   institution?: string;
+  company?: string;
+  jobTitle?: string;
+  address?: string;
+  state?: string;
+  city?: string;
+  bio?: string;
+  socialLinks?: {
+    linkedin?: string;
+    twitter?: string;
+    website?: string;
+  };
   isVerified: boolean;
   role: "user";
   refreshToken?: string;

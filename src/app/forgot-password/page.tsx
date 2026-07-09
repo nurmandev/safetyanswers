@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "@/lib/api-client";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -17,8 +18,10 @@ export default function ForgotPasswordPage() {
     const res = await api.post("/auth/forgot-password", { email });
     if (res.success) {
       setSent(true);
+      toast.success("Reset link sent to your email");
     } else {
       setError(res.message);
+      toast.error(res.message);
     }
     setLoading(false);
   };

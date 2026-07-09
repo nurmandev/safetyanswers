@@ -1,5 +1,4 @@
 import { RefreshToken } from "../models/RefreshToken";
-import { EmailVerificationToken } from "../models/EmailVerificationToken";
 import { PasswordResetToken } from "../models/PasswordResetToken";
 
 export const TokenRepository = {
@@ -17,18 +16,6 @@ export const TokenRepository = {
 
   async deleteAllUserRefreshTokens(userId: string, userType: "user" | "admin") {
     return RefreshToken.deleteMany({ userId, userType });
-  },
-
-  async createEmailVerificationToken(data: { userId: string; token: string; expiresAt: Date }) {
-    return EmailVerificationToken.create(data);
-  },
-
-  async findEmailVerificationToken(token: string) {
-    return EmailVerificationToken.findOne({ token });
-  },
-
-  async deleteEmailVerificationToken(token: string) {
-    return EmailVerificationToken.deleteOne({ token });
   },
 
   async createPasswordResetToken(data: { userId: string; userType: "user" | "admin"; token: string; expiresAt: Date }) {

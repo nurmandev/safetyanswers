@@ -19,7 +19,7 @@ export const AuthController = {
     ApiResponse.created(res, {
       user: result.user,
       accessToken: result.accessToken,
-    }, "Registration successful. Please verify your email.");
+    }, "Registration successful");
   }),
 
   login: asyncHandler(async (req: Request, res: Response) => {
@@ -69,23 +69,6 @@ export const AuthController = {
   getMe: asyncHandler(async (req: AuthRequest, res: Response) => {
     const user = await AuthService.getMe(req.user!.id);
     ApiResponse.success(res, { user });
-  }),
-
-  verifyEmail: asyncHandler(async (req: Request, res: Response) => {
-    const { token } = req.query;
-    if (!token || typeof token !== "string") {
-      ApiResponse.error(res, "Verification token required", 400);
-      return;
-    }
-
-    await AuthService.verifyEmail(token);
-    ApiResponse.success(res, {}, "Email verified successfully");
-  }),
-
-  resendVerification: asyncHandler(async (req: Request, res: Response) => {
-    const { email } = req.body;
-    await AuthService.resendVerification(email);
-    ApiResponse.success(res, {}, "If the email exists, a verification link has been sent");
   }),
 
   forgotPassword: asyncHandler(async (req: Request, res: Response) => {

@@ -51,19 +51,8 @@ import {
  MoreHorizontal,
 } from "lucide-react";
 import { AccountLayout } from "@/components/AccountLayout";
-import {
- userSummaryCards,
- userPurchases,
- userConsultations,
- consultationProgressSteps,
- userPayments,
- downloadItems,
- savedArticles,
- recommendedArticles,
- upcomingDeadlines,
- userNotifications,
- userRecentActivity,
-} from "@/lib/mock-data";
+import { useAuth } from "@/lib/auth-context";
+import { dashboardApi, type DashboardData } from "@/lib/dashboard-api";
 
 const containerVariants = {
  hidden: { opacity: 0 },
@@ -159,14 +148,40 @@ function Card({
 export default function AccountPage() {
  const [activeTab, setActiveTab] = useState("all");
  const [isLoading, setIsLoading] = useState(true);
+ const [dashboard, setDashboard] = useState<DashboardData | null>(null);
+ const { user } = useAuth();
 
  useEffect(() => {
- const timer = window.setTimeout(() => setIsLoading(false), 650);
- return () => window.clearTimeout(timer);
+   const fetchDashboard = async () => {
+     try {
+       const res = await dashboardApi.getDashboard();
+       if (res.success && res.data) {
+         setDashboard(res.data as unknown as DashboardData);
+       }
+     } catch {
+       // silently fail
+     } finally {
+       setIsLoading(false);
+     }
+   };
+   fetchDashboard();
  }, []);
 
- const filteredPurchases =
- activeTab === "all" ? userPurchases : userPurchases.slice(0, 3);
+ const userName = user?.name || dashboard?.user?.name || "User";
+ const stats = dashboard?.statistics;
+ const profileCompletion = dashboard?.profileCompletion || 0;
+ const upcomingBookings = dashboard?.upcomingBookings || [];
+ const recentPurchases = dashboard?.recentPurchases || [];
+ const recentDownloads = dashboard?.recentDownloads || [];
+ const recentNotifications = dashboard?.recentNotifications || [];
+ const recentActivity = dashboard?.recentActivity || [];
+
+ const summaryCards = [
+   { label: "Total Purchases", value: String(stats?.totalPurchases || 0), icon: "ShoppingBag", color: "text-purple-600" },
+   { label: "Consultations", value: String(stats?.totalBookings || 0), icon: "CalendarCheck", color: "text-blue-600" },
+   { label: "Completed", value: String(stats?.completedBookings || 0), icon: "CheckCircle", color: "text-green-600" },
+   { label: "Downloads", value: String(stats?.totalDownloads || 0), icon: "Download", color: "text-amber-600" },
+ ];
 
  if (isLoading) {
  return (
@@ -216,12 +231,10 @@ export default function AccountPage() {
  CLIENT PORTAL
  </p>
  <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight max-w-lg leading-snug">
- Hello, Nurudeen
+ Hello, {userName}
  </h2>
  <p className="text-sm text-purple-200 max-w-md">
- You're making great progress! Your PhD dissertation audit is 35%
- complete. Continue where you left off and keep up the excellent
- work.
+ Welcome back to your dashboard. You have {stats?.pendingBookings || 0} pending consultation{stats?.pendingBookings !== 1 ? "s" : ""} and {stats?.unreadNotifications || 0} unread notification{stats?.unreadNotifications !== 1 ? "s" : ""}.
  </p>
  </div>
  <div className="relative z-10 mt-5 sm:mt-6 flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3">
@@ -245,45 +258,45 @@ export default function AccountPage() {
  <motion.div variants={itemVariants}>
  <SectionHeader title="Your Overview" />
  <div className="grid gap-3 sm:gap-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
- {userSummaryCards.map((card, i) => {
+ {summaryCards.map((card, i) => {
  const IconComponent =
  {
- ShoppingBag,
- CalendarCheck,
- CheckCircle,
- Download,
- Bookmark,
- Award,
- Wallet,
- Gift,
+   ShoppingBag,
+   CalendarCheck,
+   CheckCircle,
+   Download,
+   Bookmark,
+   Award,
+   Wallet,
+   Gift,
  }[card.icon] || ShoppingBag;
  return (
- <Card key={i} className="p-5">
- <div className="flex items-center justify-between mb-3">
- <div
- className={cn(
- "flex h-9 w-9 items-center justify-center",
- card.color
- .replace("text-", "bg-")
- .replace("600", "50") +
- " dark:" +
- card.color
- .replace("text-", "bg-")
- .replace("600", "950/20"),
- )}
- >
- <IconComponent
- className={cn("h-4.5 w-4.5", card.color)}
- />
- </div>
- </div>
- <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
- {card.label}
- </p>
- <p className="text-xl font-extrabold text-slate-900 dark:text-white leading-tight mt-0.5">
- {card.value}
- </p>
- </Card>
+   <Card key={i} className="p-5">
+     <div className="flex items-center justify-between mb-3">
+       <div
+         className={cn(
+           "flex h-9 w-9 items-center justify-center",
+           card.color
+             .replace("text-", "bg-")
+             .replace("600", "50") +
+             " dark:" +
+             card.color
+               .replace("text-", "bg-")
+               .replace("600", "950/20"),
+         )}
+       >
+         <IconComponent
+           className={cn("h-4.5 w-4.5", card.color)}
+         />
+       </div>
+     </div>
+     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+       {card.label}
+     </p>
+     <p className="text-xl font-extrabold text-slate-900 dark:text-white leading-tight mt-0.5">
+       {card.value}
+     </p>
+   </Card>
  );
  })}
  </div>
@@ -292,191 +305,66 @@ export default function AccountPage() {
  {/* Main 2-column layout */}
  <div className="grid gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-12 items-start">
  {/* Left Column */}
- <div className="lg:col-span-8 space-y-4 sm:space-y-6 lg:space-y-8">
- {/* 3. My Purchases */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="My Purchases" href="/account/purchased" />
- <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
- {userPurchases.slice(0, 4).map((purchase, i) => (
- <Card key={i} className="p-5 flex flex-col justify-between">
- <div>
- <div className="flex items-center gap-3 mb-3">
- <div className="flex h-10 w-10 shrink-0 items-center justify-center bg-purple-50 dark:bg-purple-950/20 text-[#7c3aed]">
- <FileText className="h-5 w-5" />
- </div>
- <div className="min-w-0">
- <p className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">
- {purchase.title}
- </p>
- <p className="text-[10px] text-slate-400 mt-0.5">
- {purchase.purchaseDate}
- </p>
- </div>
- </div>
- </div>
- <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-[#1a1a1f] mt-3">
- <span className="text-xs font-bold text-[#7c3aed]">
- {purchase.price}
- </span>
- <div className="flex gap-2">
- <button className="text-[10px] font-bold text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1a1a1f] px-3 py-1.5 hover:bg-slate-50 dark:hover:bg-[#121215] transition-all">
- Download
- </button>
- <button className="text-[10px] font-bold bg-[#7c3aed] text-white px-3 py-1.5 hover:bg-[#6d28d9] transition-all">
- Read
- </button>
- </div>
- </div>
- </Card>
- ))}
- </div>
- </motion.div>
+  <div className="lg:col-span-8 space-y-4 sm:space-y-6 lg:space-y-8">
 
- {/* 4. My Consultations */}
- <motion.div variants={itemVariants}>
- <SectionHeader
- title="My Consultations"
- href="/account/bookings"
- />
- <Card className="overflow-hidden">
- <div className="hidden lg:block overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 dark:border-[#1a1a1f] text-slate-400 font-bold uppercase tracking-wider text-[9px]">
- <th className="pb-3 px-4">Service</th>
- <th className="pb-3 px-4">Status</th>
- <th className="pb-3 px-4">Deadline</th>
- <th className="pb-3 px-4">Consultant</th>
- <th className="pb-3 px-4">Progress</th>
- <th className="pb-3 px-4 text-right">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f]">
- {userConsultations.map((c, i) => (
- <tr
- key={i}
- className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors"
- >
- <td className="py-4 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">
- {c.service}
- </td>
- <td className="py-4 px-4">
- <StatusBadge status={c.status} />
- </td>
- <td className="py-4 px-4 text-slate-500 dark:text-slate-400 whitespace-nowrap">
- {c.deadline}
- </td>
- <td className="py-4 px-4 text-slate-700 dark:text-slate-300 font-semibold whitespace-nowrap">
- {c.consultant}
- </td>
- <td className="py-4 px-4">
- <div className="flex items-center gap-2">
- <div className="w-16 h-1.5 bg-slate-100 dark:bg-[#1a1a1f] overflow-hidden">
- <div
- className="h-full bg-[#7c3aed] transition-all"
- style={{ width: `${c.progress}%` }}
- />
- </div>
- <span className="text-[10px] font-bold text-slate-400">
- {c.progress}%
- </span>
- </div>
- </td>
- <td className="py-4 px-4 text-right">
- <button className="text-[10px] font-bold text-[#7c3aed] border border-[#7c3aed] px-3 py-1.5 hover:bg-[#7c3aed] hover:text-white transition-all">
- View
- </button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="lg:hidden p-4 space-y-3">
- {userConsultations.map((c, i) => (
- <div
- key={i}
-                className="border border-slate-200 dark:border-[#1a1a1f] bg-slate-50/70 dark:bg-[#121215]/50 p-4"
- >
- <div className="flex items-start justify-between gap-3">
- <div>
- <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
- {c.service}
- </p>
- <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
- {c.consultant}
- </p>
- </div>
- <StatusBadge status={c.status} />
- </div>
- <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
- <span>{c.deadline}</span>
- <span>{c.progress}%</span>
- </div>
- <div className="mt-2 h-1.5 w-full bg-slate-200 dark:bg-[#1a1a1f] overflow-hidden">
- <div
- className="h-full bg-[#7c3aed]"
- style={{ width: `${c.progress}%` }}
- />
- </div>
- </div>
- ))}
- </div>
- </Card>
- </motion.div>
-
- {/* 5. Consultation Progress Timeline */}
+  {/* Consultation Progress */}
  <motion.div variants={itemVariants}>
  <SectionHeader title="Consultation Progress" />
  <Card className="p-6">
  <div className="relative">
- {consultationProgressSteps.map((step, i) => (
- <div
- key={i}
- className="flex items-start gap-4 pb-6 last:pb-0 relative"
- >
- <div className="flex flex-col items-center">
- <div
- className={cn(
- "flex h-8 w-8 shrink-0 items-center justify-center border-2 z-10",
- step.completed
- ? "bg-[#7c3aed] border-[#7c3aed] text-white"
- : "bg-white dark:bg-[#0c0c0e] border-slate-300 dark:border-slate-600 text-slate-400",
- )}
- >
- {step.completed ? (
- <CheckCircle className="h-4 w-4" />
- ) : (
- <span className="text-xs font-bold">{i + 1}</span>
- )}
- </div>
- {i < consultationProgressSteps.length - 1 && (
- <div
- className={cn(
- "w-0.5 h-full absolute top-8 left-4 -translate-x-1/2",
- step.completed
- ? "bg-[#7c3aed]"
- : "bg-slate-200 dark:bg-[#1a1a1f]",
- )}
- />
- )}
- </div>
- <div className="pt-1">
- <p
- className={cn(
- "text-sm font-bold",
- step.completed
- ? "text-slate-900 dark:text-white"
- : "text-slate-400 dark:text-slate-500",
- )}
- >
- {step.label}
- </p>
- <p className="text-[10px] text-slate-400 mt-0.5">
- {step.date}
- </p>
- </div>
- </div>
+ {[
+   { label: "Booking Submitted", completed: true, date: "Complete" },
+   { label: "Under Review", completed: true, date: "Complete" },
+   { label: "Consultant Assigned", completed: false, date: "Pending" },
+   { label: "In Progress", completed: false, date: "Pending" },
+   { label: "Completed", completed: false, date: "Pending" },
+ ].map((step, i) => (
+   <div
+     key={i}
+     className="flex items-start gap-4 pb-6 last:pb-0 relative"
+   >
+     <div className="flex flex-col items-center">
+       <div
+         className={cn(
+           "flex h-8 w-8 shrink-0 items-center justify-center border-2 z-10",
+           step.completed
+             ? "bg-[#7c3aed] border-[#7c3aed] text-white"
+             : "bg-white dark:bg-[#0c0c0e] border-slate-300 dark:border-slate-600 text-slate-400",
+         )}
+       >
+         {step.completed ? (
+           <CheckCircle className="h-4 w-4" />
+         ) : (
+           <span className="text-xs font-bold">{i + 1}</span>
+         )}
+       </div>
+       {i < 4 && (
+         <div
+           className={cn(
+             "w-0.5 h-full absolute top-8 left-4 -translate-x-1/2",
+             step.completed
+               ? "bg-[#7c3aed]"
+               : "bg-slate-200 dark:bg-[#1a1a1f]",
+           )}
+         />
+       )}
+     </div>
+     <div className="pt-1">
+       <p
+         className={cn(
+           "text-sm font-bold",
+           step.completed
+             ? "text-slate-900 dark:text-white"
+             : "text-slate-400 dark:text-slate-500",
+         )}
+       >
+         {step.label}
+       </p>
+       <p className="text-[10px] text-slate-400 mt-0.5">
+         {step.date}
+       </p>
+     </div>
+   </div>
  ))}
  </div>
  </Card>
@@ -485,466 +373,120 @@ export default function AccountPage() {
  {/* 6. Recent Payments */}
  <motion.div variants={itemVariants}>
  <SectionHeader title="Recent Payments" href="/account/payments" />
- <Card className="overflow-hidden">
- <div className="hidden lg:block overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 dark:border-[#1a1a1f] text-slate-400 font-bold uppercase tracking-wider text-[9px]">
- <th className="pb-3 px-4">Invoice</th>
- <th className="pb-3 px-4">Amount</th>
- <th className="pb-3 px-4">Gateway</th>
- <th className="pb-3 px-4">Receipt</th>
- <th className="pb-3 px-4">Status</th>
- <th className="pb-3 px-4 text-right">Date</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f]">
- {userPayments.map((p, i) => (
- <tr
- key={i}
- className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors"
- >
- <td className="py-4 px-4 font-bold text-slate-900 dark:text-white">
- {p.invoice}
- </td>
- <td className="py-4 px-4 font-bold text-slate-900 dark:text-white">
- {p.amount}
- </td>
- <td className="py-4 px-4 text-slate-600 dark:text-slate-400">
- {p.gateway}
- </td>
- <td className="py-4 px-4">
- <button className="text-[10px] font-bold text-[#7c3aed] hover:underline flex items-center gap-1">
- <Download className="h-3 w-3" /> PDF
- </button>
- </td>
- <td className="py-4 px-4">
- <StatusBadge status={p.status} />
- </td>
- <td className="py-4 px-4 text-right text-slate-500 dark:text-slate-400">
- {p.date}
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="lg:hidden p-4 space-y-3">
- {userPayments.map((p, i) => (
- <div
- key={i}
-                className="border border-slate-200 dark:border-[#1a1a1f] bg-slate-50/70 dark:bg-[#121215]/50 p-4"
- >
- <div className="flex items-start justify-between gap-3">
- <div>
- <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
- {p.invoice}
- </p>
- <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
- {p.amount}
- </p>
- </div>
- <StatusBadge status={p.status} />
- </div>
- <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
- <span>{p.gateway}</span>
- <span>{p.date}</span>
- </div>
- </div>
- ))}
- </div>
+ <Card className="p-6 text-center">
+ <CreditCard className="h-8 w-8 mx-auto text-slate-300 mb-2" />
+ <p className="text-xs text-slate-400">Payment history will appear here</p>
  </Card>
  </motion.div>
 
- {/* 7. Download Center */}
- <motion.div variants={itemVariants}>
- <SectionHeader
- title="Download Center"
- href="/account/downloads"
- />
- <Card className="overflow-hidden">
- <div className="hidden lg:block overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 dark:border-[#1a1a1f] text-slate-400 font-bold uppercase tracking-wider text-[9px]">
- <th className="pb-3 px-4">Name</th>
- <th className="pb-3 px-4">Type</th>
- <th className="pb-3 px-4">Date</th>
- <th className="pb-3 px-4">Size</th>
- <th className="pb-3 px-4 text-right">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 dark:divide-[#1a1a1f]">
- {downloadItems.map((item, i) => (
- <tr
- key={i}
- className="hover:bg-slate-50/50 dark:hover:bg-[#121215]/50 transition-colors"
- >
- <td className="py-4 px-4 font-bold text-slate-900 dark:text-white">
- {item.name}
- </td>
- <td className="py-4 px-4">
- <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-[#1a1a1f] px-2 py-0.5">
- {item.type}
- </span>
- </td>
- <td className="py-4 px-4 text-slate-500 dark:text-slate-400">
- {item.date}
- </td>
- <td className="py-4 px-4 text-slate-500 dark:text-slate-400">
- {item.size}
- </td>
- <td className="py-4 px-4 text-right">
- <button className="text-[10px] font-bold bg-[#7c3aed] text-white px-3 py-1.5 hover:bg-[#6d28d9] transition-all inline-flex items-center gap-1">
- <Download className="h-3 w-3" /> Download
- </button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- <div className="lg:hidden p-4 space-y-3">
- {downloadItems.map((item, i) => (
- <div
- key={i}
-                className="border border-slate-200 dark:border-[#1a1a1f] bg-slate-50/70 dark:bg-[#121215]/50 p-4"
- >
- <div className="flex items-start justify-between gap-3">
- <div>
- <p className="text-sm font-bold text-slate-900 dark:text-white">
- {item.name}
- </p>
- <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
- {item.type} â€¢ {item.size}
- </p>
- </div>
- <button className="text-[10px] font-bold bg-[#7c3aed] text-white px-3 py-1.5 hover:bg-[#6d28d9] transition-all inline-flex items-center gap-1">
- <Download className="h-3 w-3" />
- </button>
- </div>
- <p className="mt-3 text-[10px] text-slate-400">
- {item.date}
- </p>
- </div>
- ))}
- </div>
- </Card>
- </motion.div>
- </div>
+  </div>
 
- {/* Right Column - Sidebar */}
- <div className="lg:col-span-4 space-y-4 sm:space-y-6 lg:space-y-8">
- {/* 8. Saved Articles */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="Saved Articles" href="/premium" />
- <div className="space-y-3">
- {savedArticles.map((article, i) => (
- <Card
- key={i}
- className="p-4 flex items-start justify-between gap-3"
- >
- <div className="min-w-0">
- <p className="text-xs font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">
- {article.title}
- </p>
- <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-2">
- <span className="font-semibold text-[#7c3aed]">
- {article.category}
- </span>
- <span>Â·</span>
- <span>{article.savedDate}</span>
- </p>
- </div>
- <button className="shrink-0 text-[10px] font-bold text-[#7c3aed] border border-[#7c3aed] px-3 py-1.5 hover:bg-[#7c3aed] hover:text-white transition-all whitespace-nowrap">
- Read
- </button>
- </Card>
- ))}
- </div>
- </motion.div>
+  {/* Right Column - Sidebar */}
+  <div className="lg:col-span-4 space-y-4 sm:space-y-6 lg:space-y-8">
+  {/* Upcoming Deadlines */}
+  <motion.div variants={itemVariants}>
+  <SectionHeader title="Upcoming Deadlines" />
+  <Card className="p-5">
+  <div className="space-y-4">
+  {upcomingBookings.length === 0 ? (
+    <div className="text-center py-4">
+      <Calendar className="h-6 w-6 mx-auto text-slate-300 mb-2" />
+      <p className="text-xs text-slate-400">No upcoming deadlines</p>
+    </div>
+  ) : (
+    upcomingBookings.slice(0, 3).map((b, i) => (
+      <div
+        key={i}
+        className="flex items-start gap-3 pb-4 border-b border-slate-100 dark:border-[#1a1a1f] last:border-0 last:pb-0"
+      >
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-purple-50 dark:bg-purple-950/20 text-[#7c3aed]">
+          <Calendar className="h-4.5 w-4.5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-slate-900 dark:text-white">
+            {b.title}
+          </p>
+          <p className="text-[10px] text-slate-400 mt-0.5">
+            {new Date(b.preferredDate).toLocaleDateString()} at {b.preferredTime}
+          </p>
+        </div>
+        <span className="shrink-0 text-[9px] font-bold px-2 py-0.5 border bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900 dark:text-blue-400">
+          {b.meetingType}
+        </span>
+      </div>
+    ))
+  )}
+  </div>
+  </Card>
+  </motion.div>
 
- {/* 9. Recommended Articles */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="Recommended For You" />
- <div className="space-y-3">
- {recommendedArticles.map((article, i) => (
- <Card key={i} className="p-4">
- <div className="flex items-start justify-between gap-3">
- <div className="min-w-0">
- <p className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
- {article.title}
- </p>
- <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
- <Star className="h-3 w-3 text-amber-400" />
- {article.reason}
- </p>
- </div>
- <div className="shrink-0 text-right">
- <p className="text-xs font-bold text-[#7c3aed]">
- {article.price}
- </p>
- <button className="text-[10px] font-bold text-slate-500 hover:text-[#7c3aed] transition-colors mt-1">
- View
- </button>
- </div>
- </div>
- </Card>
- ))}
- </div>
- </motion.div>
-
- {/* 10. Upcoming Deadlines */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="Upcoming Deadlines" />
- <Card className="p-5">
- <div className="space-y-4">
- {upcomingDeadlines.map((d, i) => (
- <div
- key={i}
- className="flex items-start gap-3 pb-4 border-b border-slate-100 dark:border-[#1a1a1f] last:border-0 last:pb-0"
- >
- <div className="flex h-9 w-9 shrink-0 items-center justify-center bg-purple-50 dark:bg-purple-950/20 text-[#7c3aed]">
- <Calendar className="h-4.5 w-4.5" />
- </div>
- <div className="min-w-0 flex-1">
- <p className="text-xs font-bold text-slate-900 dark:text-white">
- {d.title}
- </p>
- <p className="text-[10px] text-slate-400 mt-0.5">
- {d.date} at {d.time}
- </p>
- </div>
- <span
- className={cn(
- "shrink-0 text-[9px] font-bold px-2 py-0.5 border",
- d.type === "Consultation"
- ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/20 dark:border-blue-900 dark:text-blue-400"
- : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900 dark:text-amber-400",
- )}
- >
- {d.type}
- </span>
- </div>
- ))}
- </div>
- </Card>
- </motion.div>
-
- {/* 11. Notifications */}
- <motion.div variants={itemVariants}>
- <SectionHeader
- title="Recent Notifications"
- href="/account/notifications"
- />
- <div className="space-y-2">
- {userNotifications.slice(0, 4).map((n, i) => (
- <Card key={i} className="p-4 flex items-start gap-3">
- <div
- className={cn(
- "flex h-8 w-8 shrink-0 items-center justify-center",
- n.type === "Booking Update"
- ? "bg-blue-50 text-blue-600 dark:bg-blue-950/20"
- : n.type === "Payment Confirmed"
- ? "bg-green-50 text-green-600 dark:bg-green-950/20"
- : n.type === "Content Unlocked"
- ? "bg-purple-50 text-purple-600 dark:bg-purple-950/20"
- : "bg-slate-50 text-slate-600 dark:bg-slate-950/20",
- )}
- >
- {n.type === "Booking Update" ? (
- <Calendar className="h-4 w-4" />
- ) : n.type === "Payment Confirmed" ? (
- <DollarSign className="h-4 w-4" />
- ) : n.type === "Content Unlocked" ? (
- <Lock className="h-4 w-4" />
- ) : n.type === "Newsletter" ? (
- <Mail className="h-4 w-4" />
- ) : (
- <Megaphone className="h-4 w-4" />
- )}
- </div>
- <div className="min-w-0 flex-1">
- <p className="text-xs font-bold text-slate-900 dark:text-white">
- {n.message}
- </p>
- <p className="text-[10px] text-slate-400 mt-0.5">
- {n.time}
- </p>
- </div>
- </Card>
- ))}
- </div>
- </motion.div>
-
- {/* 12. Profile Summary */}
+  {/* Profile Summary */}
  <motion.div variants={itemVariants}>
  <SectionHeader title="Profile Summary" />
  <Card className="p-6">
  <div className="flex flex-col items-center text-center">
- <div className="flex h-16 w-16 items-center justify-center bg-[#7c3aed] text-white text-xl font-bold font-mono shadow-md mb-4">
- JR
- </div>
- <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
- John Ranti
- </h4>
- <span className="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-bold border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900 dark:text-amber-400 uppercase tracking-wider">
- Premium Member
- </span>
+   <div className="flex h-16 w-16 items-center justify-center bg-[#7c3aed] text-white text-xl font-bold font-mono shadow-md mb-4 overflow-hidden">
+     {dashboard?.user?.avatar ? (
+       <img src={dashboard.user.avatar} alt={userName} className="w-full h-full object-cover" />
+     ) : (
+       userName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+     )}
+   </div>
+   <h4 className="text-base font-extrabold text-slate-900 dark:text-white">
+     {userName}
+   </h4>
+   <span className="inline-block mt-1 px-2.5 py-0.5 text-[9px] font-bold border bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/20 dark:border-amber-900 dark:text-amber-400 uppercase tracking-wider">
+     {user?.isVerified ? "Verified Member" : "Member"}
+   </span>
  </div>
  <div className="mt-6 space-y-3 text-xs">
- <div className="flex items-center justify-between">
- <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
- <MapPin className="h-3.5 w-3.5" /> Country
- </div>
- <span className="font-bold text-slate-900 dark:text-white">
- Nigeria
- </span>
- </div>
- <div className="flex items-center justify-between">
- <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
- <MailIcon className="h-3.5 w-3.5" /> Email
- </div>
- <span className="font-bold text-slate-900 dark:text-white text-[10px]">
- john.ranti@email.com
- </span>
- </div>
- <div className="flex items-center justify-between">
- <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
- <PhoneIcon className="h-3.5 w-3.5" /> Phone
- </div>
- <span className="font-bold text-slate-900 dark:text-white">
- +234 801 234 5678
- </span>
- </div>
+   <div className="flex items-center justify-between">
+     <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+       <MapPin className="h-3.5 w-3.5" /> Country
+     </div>
+     <span className="font-bold text-slate-900 dark:text-white">
+       {dashboard?.user?.country || "Not set"}
+     </span>
+   </div>
+   <div className="flex items-center justify-between">
+     <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+       <MailIcon className="h-3.5 w-3.5" /> Email
+     </div>
+     <span className="font-bold text-slate-900 dark:text-white text-[10px]">
+       {dashboard?.user?.email || user?.email}
+     </span>
+   </div>
+   <div className="flex items-center justify-between">
+     <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+       <PhoneIcon className="h-3.5 w-3.5" /> Phone
+     </div>
+     <span className="font-bold text-slate-900 dark:text-white">
+       {dashboard?.user?.phone || "Not set"}
+     </span>
+   </div>
  </div>
  <div className="mt-5 pt-4 border-t border-slate-100 dark:border-[#1a1a1f]">
- <div className="flex items-center justify-between mb-2">
- <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
- Profile Completion
- </span>
- <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
- 75%
- </span>
- </div>
- <ProgressBar value={75} />
+   <div className="flex items-center justify-between mb-2">
+     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+       Profile Completion
+     </span>
+     <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300">
+       {profileCompletion}%
+     </span>
+   </div>
+   <ProgressBar value={profileCompletion} />
  </div>
  <Link
- href="/account/profile"
- className="block mt-4 text-center w-full border border-[#7c3aed] text-[#7c3aed] hover:bg-[#7c3aed] hover:text-white text-xs font-bold py-2.5 transition-all"
+   href="/account/profile"
+   className="block mt-4 text-center w-full border border-[#7c3aed] text-[#7c3aed] hover:bg-[#7c3aed] hover:text-white text-xs font-bold py-2.5 transition-all"
  >
- Edit Profile
+   Edit Profile
  </Link>
- </Card>
- </motion.div>
+  </Card>
+  </motion.div>
 
 
- {/* 14. Quick Actions */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="Quick Actions" />
- <Card className="p-5">
- <div className="grid grid-cols-2 gap-3">
- <Link
- href="/book"
- className="flex flex-col items-center gap-2 p-4 border border-slate-200 dark:border-[#1a1a1f] hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all group"
- >
- <Calendar className="h-5 w-5 text-slate-400 group-hover:text-white" />
- <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-white text-center">
- Book Consultation
- </span>
- </Link>
- <Link
- href="/premium"
- className="flex flex-col items-center gap-2 p-4 border border-slate-200 dark:border-[#1a1a1f] hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all group"
- >
- <BookOpen className="h-5 w-5 text-slate-400 group-hover:text-white" />
- <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-white text-center">
- Browse Premium
- </span>
- </Link>
- <Link
- href="/blog"
- className="flex flex-col items-center gap-2 p-4 border border-slate-200 dark:border-[#1a1a1f] hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all group"
- >
- <FileText className="h-5 w-5 text-slate-400 group-hover:text-white" />
- <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-white text-center">
- Read Blog
- </span>
- </Link>
- <Link
- href="/account/downloads"
- className="flex flex-col items-center gap-2 p-4 border border-slate-200 dark:border-[#1a1a1f] hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all group"
- >
- <Download className="h-5 w-5 text-slate-400 group-hover:text-white" />
- <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-white text-center">
- Download Files
- </span>
- </Link>
- <Link
- href="/account/profile"
- className="flex flex-col items-center gap-2 p-4 border border-slate-200 dark:border-[#1a1a1f] hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all group"
- >
- <User className="h-5 w-5 text-slate-400 group-hover:text-white" />
- <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-white text-center">
- Update Profile
- </span>
- </Link>
- <Link
- href="/contact"
- className="flex flex-col items-center gap-2 p-4 border border-slate-200 dark:border-[#1a1a1f] hover:bg-[#7c3aed] hover:text-white hover:border-[#7c3aed] transition-all group"
- >
- <HelpCircle className="h-5 w-5 text-slate-400 group-hover:text-white" />
- <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 group-hover:text-white text-center">
- Contact Support
- </span>
- </Link>
- </div>
- </Card>
- </motion.div>
-
- {/* 15. Recent Activity */}
- <motion.div variants={itemVariants}>
- <SectionHeader title="Recent Activity" />
- <Card className="p-5">
- <div className="space-y-4">
- {userRecentActivity.map((a, i) => (
- <div
- key={i}
- className="flex items-start gap-3 pb-4 border-b border-slate-100 dark:border-[#1a1a1f] last:border-0 last:pb-0"
- >
- <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-slate-50 dark:bg-slate-950/20 text-slate-500">
- {a.action.includes("Purchased") ? (
- <ShoppingBag className="h-4 w-4" />
- ) : a.action.includes("Downloaded") ? (
- <Download className="h-4 w-4" />
- ) : a.action.includes("Booked") ? (
- <Calendar className="h-4 w-4" />
- ) : a.action.includes("Payment") ? (
- <DollarSign className="h-4 w-4" />
- ) : a.action.includes("Profile") ? (
- <User className="h-4 w-4" />
- ) : (
- <Bookmark className="h-4 w-4" />
- )}
- </div>
- <div className="min-w-0">
- <p className="text-xs font-bold text-slate-900 dark:text-white">
- {a.action}
- </p>
- <p className="text-[10px] text-slate-500 dark:text-slate-400">
- {a.description}
- </p>
- <p className="text-[9px] text-slate-400 mt-0.5">
- {a.time}
- </p>
- </div>
- </div>
- ))}
- </div>
- </Card>
- </motion.div>
-
- {/* 16. Support Card */}
+  {/* Support Card */}
  <motion.div variants={itemVariants}>
  <Card className="p-6 bg-gradient-to-br from-[#7c3aed] to-[#5b21b6] text-white border-0">
  <div className="text-center">

@@ -68,6 +68,8 @@ async function refreshAdminToken(): Promise<string | null> {
   }
 }
 
+const REQUEST_TIMEOUT = 15000;
+
 async function request<T = Record<string, unknown>>(
   endpoint: string,
   options: RequestInit = {},
@@ -86,11 +88,20 @@ async function request<T = Record<string, unknown>>(
     headers["Content-Type"] = "application/json";
   }
 
-  let response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-    credentials: "include",
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+      credentials: "include",
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (response.status === 401 && token) {
     if (isAdmin) {

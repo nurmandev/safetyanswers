@@ -38,12 +38,6 @@ export const resetPasswordSchema = z.object({
   }),
 });
 
-export const resendVerificationSchema = z.object({
-  body: z.object({
-    email: z.string().email("Please provide a valid email").toLowerCase().trim(),
-  }),
-});
-
 export type RegisterInput = z.infer<typeof registerSchema>["body"];
 export type LoginInput = z.infer<typeof loginSchema>["body"];
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>["body"];

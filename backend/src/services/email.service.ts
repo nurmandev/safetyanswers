@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 import { config } from "../config";
 import { logger } from "../utils/logger";
-import { verifyEmailTemplate } from "../emails/templates/verifyEmail";
 import { passwordResetTemplate } from "../emails/templates/passwordReset";
 import {
   bookingSubmittedTemplate,
@@ -48,11 +47,6 @@ async function sendMail(to: string, subject: string, html: string) {
 }
 
 export const EmailService = {
-  async sendVerificationEmail(email: string, token: string) {
-    const url = `${config.frontendUrl}/verify-email?token=${token}`;
-    await sendMail(email, "Verify your email address", verifyEmailTemplate(url));
-  },
-
   async sendPasswordResetEmail(email: string, token: string) {
     const url = `${config.frontendUrl}/reset-password?token=${token}`;
     await sendMail(email, "Reset your password", passwordResetTemplate(url));

@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin-auth-context";
+import { toast } from "sonner";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/admin";
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,9 +23,11 @@ export default function AdminLoginPage() {
     setLoading(true);
     const result = await login(email, password);
     if (result.success) {
-      router.push("/admin");
+      toast.success("Signed in as admin");
+      router.push(redirect);
     } else {
       setError(result.message);
+      toast.error(result.message);
     }
     setLoading(false);
   };
@@ -114,5 +119,13 @@ export default function AdminLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

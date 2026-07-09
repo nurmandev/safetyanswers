@@ -2,36 +2,6 @@ import { TokenRepository } from "../repositories/token.repository";
 import { generateRandomToken, hashToken } from "../utils/token";
 
 export const TokenService = {
-  async createEmailVerificationToken(userId: string) {
-    const rawToken = generateRandomToken();
-    const hashed = hashToken(rawToken);
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-    await TokenRepository.createEmailVerificationToken({
-      userId,
-      token: hashed,
-      expiresAt,
-    });
-
-    return rawToken;
-  },
-
-  async verifyEmailToken(rawToken: string) {
-    const hashed = hashToken(rawToken);
-    const doc = await TokenRepository.findEmailVerificationToken(hashed);
-    if (!doc) return null;
-    if (doc.expiresAt < new Date()) {
-      await TokenRepository.deleteEmailVerificationToken(hashed);
-      return null;
-    }
-    return doc;
-  },
-
-  async deleteEmailVerificationToken(rawToken: string) {
-    const hashed = hashToken(rawToken);
-    await TokenRepository.deleteEmailVerificationToken(hashed);
-  },
-
   async createPasswordResetToken(userId: string, userType: "user" | "admin") {
     const rawToken = generateRandomToken();
     const hashed = hashToken(rawToken);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ThemeProvider } from "./ThemeContext";
@@ -123,11 +123,32 @@ function AdminLayoutInner({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { admin, logout } = useAdminAuth();
+  const { admin, loading, logout } = useAdminAuth();
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    if (!loading && !admin) {
+      router.push("/admin/login?redirect=" + encodeURIComponent(pathname));
+    }
+  }, [admin, loading, router, pathname]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 bg-violet-600 animate-pulse" />
+          <div className="h-2 w-24 bg-slate-700 animate-pulse" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!admin) {
+    return null;
+  }
 
  const [showProfileMenu, setShowProfileMenu] = useState(false);
  const [showQuickActions, setShowQuickActions] = useState(false);

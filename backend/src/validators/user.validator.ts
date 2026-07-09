@@ -11,6 +11,19 @@ export const updateProfileSchema = z.object({
     phone: z.string().max(20, "Phone cannot exceed 20 characters").trim().optional(),
     country: z.string().max(100, "Country cannot exceed 100 characters").trim().optional(),
     institution: z.string().max(200, "Institution cannot exceed 200 characters").trim().optional(),
+    company: z.string().max(200, "Company cannot exceed 200 characters").trim().optional(),
+    jobTitle: z.string().max(200, "Job title cannot exceed 200 characters").trim().optional(),
+    address: z.string().max(500, "Address cannot exceed 500 characters").trim().optional(),
+    state: z.string().max(100, "State cannot exceed 100 characters").trim().optional(),
+    city: z.string().max(100, "City cannot exceed 100 characters").trim().optional(),
+    bio: z.string().max(1000, "Bio cannot exceed 1000 characters").trim().optional(),
+    socialLinks: z
+      .object({
+        linkedin: z.string().url("Invalid LinkedIn URL").trim().optional().or(z.literal("")),
+        twitter: z.string().url("Invalid Twitter URL").trim().optional().or(z.literal("")),
+        website: z.string().url("Invalid website URL").trim().optional().or(z.literal("")),
+      })
+      .optional(),
   }),
 });
 

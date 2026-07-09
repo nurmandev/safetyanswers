@@ -16,12 +16,19 @@ export const UserService = {
       avatar: user.avatar,
       country: user.country,
       institution: user.institution,
+      company: user.company,
+      jobTitle: user.jobTitle,
+      address: user.address,
+      state: user.state,
+      city: user.city,
+      bio: user.bio,
+      socialLinks: user.socialLinks,
       isVerified: user.isVerified,
       createdAt: user.createdAt,
     };
   },
 
-  async updateProfile(userId: string, data: { name?: string; phone?: string; country?: string; institution?: string }) {
+  async updateProfile(userId: string, data: { name?: string; phone?: string; country?: string; institution?: string; company?: string; jobTitle?: string; address?: string; state?: string; city?: string; bio?: string; socialLinks?: Record<string, string> }) {
     const user = await UserRepository.updateById(userId, data as any);
     if (!user) {
       throw new AppError("User not found", HTTP_STATUS.NOT_FOUND);
@@ -34,12 +41,18 @@ export const UserService = {
       avatar: user.avatar,
       country: user.country,
       institution: user.institution,
+      company: user.company,
+      jobTitle: user.jobTitle,
+      address: user.address,
+      state: user.state,
+      city: user.city,
+      bio: user.bio,
+      socialLinks: user.socialLinks,
       isVerified: user.isVerified,
     };
   },
 
   async changePassword(userId: string, currentPassword: string, newPassword: string) {
-    const user = await UserRepository.findByEmailWithPassword("");
     const fullUser = await UserRepository.findById(userId);
     if (!fullUser) {
       throw new AppError("User not found", HTTP_STATUS.NOT_FOUND);

@@ -11,8 +11,8 @@ export const UserController = {
   }),
 
   updateProfile: asyncHandler(async (req: AuthRequest, res: Response) => {
-    const { name, phone, country, institution } = req.body;
-    const user = await UserService.updateProfile(req.user!.id, { name, phone, country, institution });
+    const { name, phone, country, institution, company, jobTitle, address, state, city, bio, socialLinks } = req.body;
+    const user = await UserService.updateProfile(req.user!.id, { name, phone, country, institution, company, jobTitle, address, state, city, bio, socialLinks });
     ApiResponse.success(res, { user }, "Profile updated successfully");
   }),
 

@@ -1,159 +1,245 @@
-import { AccountLayout } from "@/components/AccountLayout";
+"use client";
 
-const files = [
- {
- name: "Dissertation Research Proposal Checklist.pdf",
- format: "PDF",
- size: "2.4 MB",
- date: "Jul 01, 2026",
- category: "Academic Support",
- },
- {
- name: "HSE Workplace Safety Risk Assessment Template.xlsx",
- format: "XLSX",
- size: "1.1 MB",
- date: "Jun 28, 2026",
- category: "Health & Safety",
- },
- {
- name: "Postgraduate Statement of Purpose Editorial Guide.docx",
- format: "DOCX",
- size: "820 KB",
- date: "Jun 20, 2026",
- category: "Professional Writing",
- },
-];
+import { useState, useEffect } from "react";
+import { AccountLayout } from "@/components/AccountLayout";
+import { api } from "@/lib/api-client";
+import { toast } from "sonner";
+import { Download, FileText, ExternalLink } from "lucide-react";
+import Link from "next/link";
+
+interface DownloadItem {
+  _id: string;
+  article: {
+    _id: string;
+    title: string;
+    slug: string;
+    featuredImage?: string;
+    downloadablePdf?: string;
+    category?: string;
+  };
+  purchase: {
+    _id: string;
+    amount: number;
+    purchaseDate: string;
+  };
+  downloadedAt: string;
+  status: string;
+}
+
+interface PurchaseItem {
+  _id: string;
+  article: {
+    _id: string;
+    title: string;
+    slug: string;
+    featuredImage?: string;
+    downloadablePdf?: string;
+    category?: string;
+  };
+  amount: number;
+  purchaseDate: string;
+  downloadCount: number;
+}
 
 export default function AccountDownloadsPage() {
- return (
- <AccountLayout title="Downloads" currentPath="/account/downloads">
- <div className="space-y-8">
- 
- {/* Upload Zone (As per PRD maximum file size 100 MB, DOCX, PDF, XLSX, PPTX, ZIP) */}
- <div className="bg-white border border-slate-100 shadow-sm p-8">
- <div className="border-b border-slate-100 pb-4 mb-6">
- <h3 className="text-lg font-bold text-slate-955">Submit Deliverable Files</h3>
- <p className="text-xs text-slate-400 mt-1">Upload drafts, thesis guidelines, or regulatory checklists directly to your coordinators.</p>
- </div>
- 
- <div className="border border-dashed border-slate-200 bg-slate-50/50 p-10 text-center flex flex-col items-center justify-center cursor-pointer hover:border-slate-800 transition-colors">
- <svg className="h-10 w-10 text-slate-400 mb-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
- <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
- </svg>
- <p className="text-xs font-bold text-slate-900">Drag and drop your project draft here, or <span className="text-[#7c3aed] underline">browse local files</span></p>
- <p className="text-[10px] text-slate-400 mt-2 font-medium">Supported formats: PDF, DOCX, XLSX, PPTX, ZIP (Max size: 100 MB)</p>
- </div>
- </div>
+  const [purchases, setPurchases] = useState<PurchaseItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
- {/* Downloads Directory */}
- <div className="bg-white border border-slate-100 shadow-sm flex flex-col min-h-[50vh]">
- 
- {/* Header */}
- <div className="p-6 border-b border-slate-100">
- <h3 className="text-lg font-bold text-slate-955">Downloadable Deliverables</h3>
- <p className="text-xs text-slate-400 mt-1">Access completed reports, proofread papers, and safety template kits ready for local saving.</p>
- </div>
+  useEffect(() => {
+    const fetchPurchases = async () => {
+      try {
+        const res = await api.get<{ purchases: PurchaseItem[] }>("/premium/purchases");
+        if (res.success && res.data) {
+          setPurchases((res.data as any).purchases || []);
+        }
+      } catch {
+        // silently fail
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPurchases();
+  }, []);
 
- {/* Table list */}
- <div className="flex-grow">
- {/* Desktop table */}
- <div className="hidden lg:block overflow-x-auto">
- <table className="w-full text-left border-collapse text-xs">
- <thead>
- <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
- <th className="py-4 px-6">File Name</th>
- <th className="py-4 px-6">Classification</th>
- <th className="py-4 px-6">Format</th>
- <th className="py-4 px-6">Size</th>
- <th className="py-4 px-6">Upload Date</th>
- <th className="py-4 px-6 text-right">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100 text-slate-700">
- {files.map((file) => (
- <tr key={file.name} className="hover:bg-slate-50/50 transition-colors">
- <td className="py-5 px-6">
- <div className="flex items-center gap-3">
- <div className="flex h-8 w-8 items-center justify-center bg-slate-50 border border-slate-100 text-slate-500">
- <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
- <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
- </svg>
- </div>
- <span className="font-bold text-slate-900">{file.name}</span>
- </div>
- </td>
- <td className="py-5 px-6">
- <span className="text-[10px] font-extrabold px-2.5 py-1 border border-slate-100 bg-slate-50 text-slate-600">
- {file.category}
- </span>
- </td>
- <td className="py-5 px-6 font-bold text-slate-500">
- {file.format}
- </td>
- <td className="py-5 px-6 text-slate-500 font-medium">
- {file.size}
- </td>
- <td className="py-5 px-6 text-slate-500 font-semibold">
- {file.date}
- </td>
- <td className="py-5 px-6 text-right">
- <button className="inline-flex h-8 px-4 items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all">
- Download
- </button>
- </td>
- </tr>
- ))}
- </tbody>
- </table>
- </div>
+  const filtered = purchases.filter((p) =>
+    p.article?.title?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
- {/* Mobile cards */}
- <div className="block lg:hidden p-4 space-y-3">
- {files.map((file) => (
- <div key={file.name} className=" border border-slate-200 bg-slate-50/60 p-4">
- <div className="flex items-start gap-3">
- <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-slate-50 border border-slate-100 text-slate-500">
- <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
- <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
- </svg>
- </div>
- <div className="min-w-0 flex-1">
- <h4 className="font-bold text-slate-900 text-sm truncate">{file.name}</h4>
- </div>
- </div>
- <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
- <div>
- <p className="text-slate-400 font-semibold">Type</p>
- <span className="text-[10px] font-extrabold px-2 py-0.5 border border-slate-100 bg-slate-50 text-slate-600">
- {file.category}
- </span>
- </div>
- <div>
- <p className="text-slate-400 font-semibold">Format</p>
- <p className="font-bold text-slate-500">{file.format}</p>
- </div>
- <div>
- <p className="text-slate-400 font-semibold">Size</p>
- <p className="font-medium text-slate-500">{file.size}</p>
- </div>
- <div className="col-span-3">
- <p className="text-slate-400 font-semibold">Upload Date</p>
- <p className="font-semibold text-slate-500">{file.date}</p>
- </div>
- </div>
- <div className="mt-3">
- <button className="inline-flex h-8 px-4 items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all">
- Download
- </button>
- </div>
- </div>
- ))}
- </div>
- </div>
+  const handleDownload = async (purchase: PurchaseItem) => {
+    if (!purchase.article?.downloadablePdf) {
+      toast.error("PDF not available for this article");
+      return;
+    }
+    window.open(purchase.article.downloadablePdf, "_blank");
+    toast.success("Download started");
+  };
 
- </div>
+  return (
+    <AccountLayout title="Downloads" currentPath="/account/downloads">
+      <div className="space-y-8">
+        <div className="bg-white border border-slate-100 shadow-sm flex flex-col min-h-[50vh]">
+          <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-bold text-slate-955">Purchased Resources</h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Access completed reports, proofread papers, and templates ready for download.
+              </p>
+            </div>
+            <div className="w-full sm:w-64">
+              <input
+                type="text"
+                placeholder="Search resources..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#7c3aed] transition-colors"
+              />
+            </div>
+          </div>
 
- </div>
- </AccountLayout>
- );
+          <div className="flex-grow">
+            <div className="hidden lg:block overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50/50 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                    <th className="py-4 px-6">File Name</th>
+                    <th className="py-4 px-6">Category</th>
+                    <th className="py-4 px-6">Price</th>
+                    <th className="py-4 px-6">Purchased</th>
+                    <th className="py-4 px-6">Downloads</th>
+                    <th className="py-4 px-6 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-700">
+                  {loading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <tr key={i}>
+                        <td colSpan={6} className="py-5 px-6">
+                          <div className="h-4 bg-slate-100 animate-pulse w-1/3" />
+                        </td>
+                      </tr>
+                    ))
+                  ) : filtered.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
+                        <FileText className="h-8 w-8 mx-auto mb-2 text-slate-300" />
+                        <p className="text-sm font-bold">No downloads yet</p>
+                        <p className="text-xs mt-1">Purchase premium articles to see them here</p>
+                      </td>
+                    </tr>
+                  ) : (
+                    filtered.map((item) => (
+                      <tr key={item._id} className="hover:bg-slate-50/50 transition-colors">
+                        <td className="py-5 px-6">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-8 w-8 items-center justify-center bg-slate-50 border border-slate-100 text-slate-500">
+                              <FileText className="h-4 w-4" />
+                            </div>
+                            <span className="font-bold text-slate-900">{item.article?.title || "Untitled"}</span>
+                          </div>
+                        </td>
+                        <td className="py-5 px-6">
+                          <span className="text-[10px] font-extrabold px-2.5 py-1 border border-slate-100 bg-slate-50 text-slate-600">
+                            {item.article?.category || "General"}
+                          </span>
+                        </td>
+                        <td className="py-5 px-6 font-bold text-slate-500">
+                          ${item.amount}
+                        </td>
+                        <td className="py-5 px-6 text-slate-500 font-semibold">
+                          {new Date(item.purchaseDate).toLocaleDateString()}
+                        </td>
+                        <td className="py-5 px-6 text-slate-500 font-medium">
+                          {item.downloadCount}
+                        </td>
+                        <td className="py-5 px-6 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <Link
+                              href={`/premium/${item.article?.slug || ""}`}
+                              className="inline-flex h-8 px-3 items-center justify-center border border-slate-200 text-slate-700 text-[11px] font-bold hover:bg-slate-50 transition-all"
+                            >
+                              <ExternalLink className="h-3 w-3 mr-1" /> View
+                            </Link>
+                            {item.article?.downloadablePdf && (
+                              <button
+                                onClick={() => handleDownload(item)}
+                                className="inline-flex h-8 px-4 items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all"
+                              >
+                                <Download className="h-3 w-3 mr-1" /> Download
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="block lg:hidden p-4 space-y-3">
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="border border-slate-200 bg-slate-50/60 p-4 animate-pulse">
+                    <div className="h-4 bg-slate-100 w-2/3 mb-2" />
+                    <div className="h-3 bg-slate-100 w-1/3" />
+                  </div>
+                ))
+              ) : filtered.length === 0 ? (
+                <div className="py-12 text-center text-slate-400">
+                  <FileText className="h-8 w-8 mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm font-bold">No downloads yet</p>
+                </div>
+              ) : (
+                filtered.map((item) => (
+                  <div key={item._id} className="border border-slate-200 bg-slate-50/60 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center bg-slate-50 border border-slate-100 text-slate-500">
+                        <FileText className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-slate-900 text-sm truncate">{item.article?.title || "Untitled"}</h4>
+                      </div>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <p className="text-slate-400 font-semibold">Category</p>
+                        <span className="text-[10px] font-extrabold px-2 py-0.5 border border-slate-100 bg-slate-50 text-slate-600">
+                          {item.article?.category || "General"}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="text-slate-400 font-semibold">Price</p>
+                        <p className="font-bold text-slate-500">${item.amount}</p>
+                      </div>
+                      <div>
+                        <p className="text-slate-400 font-semibold">Downloads</p>
+                        <p className="font-medium text-slate-500">{item.downloadCount}</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      <Link
+                        href={`/premium/${item.article?.slug || ""}`}
+                        className="inline-flex h-8 px-4 items-center justify-center border border-slate-200 text-slate-700 text-[11px] font-bold hover:bg-slate-50 transition-all"
+                      >
+                        View
+                      </Link>
+                      {item.article?.downloadablePdf && (
+                        <button
+                          onClick={() => handleDownload(item)}
+                          className="inline-flex h-8 px-4 items-center justify-center bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold transition-all"
+                        >
+                          <Download className="h-3 w-3 mr-1" /> Download
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </AccountLayout>
+  );
 }

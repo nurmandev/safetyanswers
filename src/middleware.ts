@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-
 const publicRoutes = [
   "/login",
   "/register",
   "/forgot-password",
   "/reset-password",
-  "/verify-email",
   "/",
   "/about",
   "/services",
@@ -27,6 +24,8 @@ const userRoutes = [
   "/account/payments",
   "/account/downloads",
   "/account/notifications",
+  "/account/support",
+  "/account/messages",
   "/book",
 ];
 
@@ -41,36 +40,31 @@ const adminPublicRoutes = [
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const isStaticAsset = pathname.startsWith("/_next") || pathname.startsWith("/favicon") || pathname.startsWith("/images") || pathname === "/favicon.ico";
+  const isStaticAsset =
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/images") ||
+    pathname === "/favicon.ico";
+
   if (isStaticAsset) {
     return NextResponse.next();
   }
 
-  const isPublic = publicRoutes.some((route) =>
+  const isUserRoute = userRoutes.some((route) =>
     route === "/" ? pathname === "/" : pathname.startsWith(route)
   );
-  const isUserRoute = userRoutes.some((route) => pathname.startsWith(route));
   const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
 
   if (!isUserRoute && !isAdminRoute) {
     return NextResponse.next();
   }
 
+  // User routes: rely on client-side AuthProvider for session verification.
+  // The middleware cannot access backend cookies (httpOnly, cross-domain)
+  // from the Edge Runtime, so server-side token refresh checks are not possible.
+  // AccountLayout performs client-side auth guards and redirects.
   if (isUserRoute) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      if (response.ok) {
-        return NextResponse.next();
-      }
-    } catch {}
-
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.next();
   }
 
   if (isAdminRoute) {
@@ -79,20 +73,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    try {
-      const response = await fetch(`${API_BASE}/admin/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
-      });
-      if (response.ok) {
-        return NextResponse.next();
-      }
-    } catch {}
-
-    const loginUrl = new URL("/admin/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    // Admin routes: same cross-domain cookie issue applies.
+    // Rely on client-side AdminAuthProvider for session verification.
+    return NextResponse.next();
   }
 
   return NextResponse.next();

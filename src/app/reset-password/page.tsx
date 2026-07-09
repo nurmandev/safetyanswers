@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
+import { toast } from "sonner";
 
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -40,9 +41,11 @@ function ResetPasswordForm() {
     const res = await api.post("/auth/reset-password", { token, password });
     if (res.success) {
       setSuccess(true);
+      toast.success("Password reset successfully");
       setTimeout(() => router.push("/login"), 3000);
     } else {
       setError(res.message);
+      toast.error(res.message);
     }
     setLoading(false);
   };

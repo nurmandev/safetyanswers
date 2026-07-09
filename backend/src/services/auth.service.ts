@@ -19,9 +19,6 @@ export const AuthService = {
     }
 
     const user = await UserRepository.create({ name, email, password });
-    const verificationToken = await TokenService.createEmailVerificationToken(user._id.toString());
-
-    await EmailService.sendVerificationEmail(email, verificationToken);
 
     const accessToken = generateAccessToken(user._id.toString(), ROLES.USER);
     const refreshToken = generateRefreshToken(user._id.toString(), ROLES.USER);
@@ -116,33 +113,17 @@ export const AuthService = {
       avatar: user.avatar,
       country: user.country,
       institution: user.institution,
+      company: user.company,
+      jobTitle: user.jobTitle,
+      address: user.address,
+      state: user.state,
+      city: user.city,
+      bio: user.bio,
+      socialLinks: user.socialLinks,
       isVerified: user.isVerified,
       role: user.role,
       createdAt: user.createdAt,
     };
-  },
-
-  async verifyEmail(token: string) {
-    const doc = await TokenService.verifyEmailToken(token);
-    if (!doc) {
-      throw new AppError("Invalid or expired verification token", HTTP_STATUS.BAD_REQUEST);
-    }
-
-    await UserRepository.updateById(doc.userId, { isVerified: true } as any);
-    await TokenService.deleteEmailVerificationToken(token);
-  },
-
-  async resendVerification(email: string) {
-    const user = await UserRepository.findByEmail(email);
-    if (!user) {
-      throw new AppError("No account found with this email", HTTP_STATUS.NOT_FOUND);
-    }
-    if (user.isVerified) {
-      throw new AppError("Email is already verified", HTTP_STATUS.BAD_REQUEST);
-    }
-
-    const verificationToken = await TokenService.createEmailVerificationToken(user._id.toString());
-    await EmailService.sendVerificationEmail(email, verificationToken);
   },
 
   async forgotPassword(email: string) {

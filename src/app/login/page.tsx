@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner";
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/account";
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,9 +23,11 @@ export default function LoginPage() {
     setLoading(true);
     const result = await login(email, password);
     if (result.success) {
-      router.push("/account");
+      toast.success("Signed in successfully");
+      router.push(redirect);
     } else {
       setError(result.message);
+      toast.error(result.message);
     }
     setLoading(false);
   };
@@ -121,5 +126,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
