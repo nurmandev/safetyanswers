@@ -137,7 +137,7 @@ export function AccountLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden">
+    <div className="h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden">
       {/* Sidebar overlay (mobile only) */}
       {sidebarOpen && (
         <div
@@ -148,27 +148,40 @@ export function AccountLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed lg:sticky lg:top-0 left-0 h-screen bg-white border-r border-slate-100 z-40 lg:z-auto transition-all duration-300 ease-out shadow-2xl lg:shadow-none flex flex-col shrink-0 ${
+        className={`fixed left-0 top-0 h-full bg-white border-r border-slate-100 z-40 transition-all duration-300 ease-out shadow-2xl flex flex-col shrink-0 ${
           sidebarOpen
-            ? "w-[75vw] max-w-[280px] lg:w-60 translate-x-0"
-            : "w-0 -translate-x-full lg:translate-x-0 lg:w-0 overflow-hidden"
+            ? "w-full sm:w-[280px] lg:w-60 translate-x-0"
+            : "-translate-x-full lg:w-0"
         }`}
       >
-        <div className="flex-1 overflow-y-auto p-4 pt-20 lg:pt-6">
-          <div className="flex items-center justify-between mb-6 px-1">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">
-              Menu
-            </p>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="flex h-7 w-7 items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-              title="Close sidebar"
-            >
+        {/* Sidebar logo */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+          <Link href="/account" className="flex items-center gap-2.5 shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center bg-[#7c3aed] text-white">
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l8.982-11.795m-9 0L9.814 4.096 9.813 4.1a.75.75 0 011.396-.135L21 21M9.813 15.904L21 21m-11.188-5.096A9.75 9.75 0 013 12c0-5.385 4.365-9.75 9.75-9.75 2.11 0 4.06.669 5.64 1.8" />
               </svg>
-            </button>
-          </div>
+            </div>
+            <span className="text-base font-bold tracking-tight text-[#0f172a]">
+              safetyanswers
+            </span>
+          </Link>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="flex h-7 w-7 items-center justify-center text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            title="Close sidebar"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Sidebar nav */}
+        <div className="flex-1 overflow-y-auto p-4 pt-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-3 px-3">
+            Menu
+          </p>
           <nav className="space-y-0.5">
             {overviewLinks.map((item) => {
               const isActive = currentPath === item.href;
@@ -231,60 +244,60 @@ export function AccountLayout({
       </aside>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col min-h-screen min-w-0 lg:overflow-hidden">
+      <div className={`flex-1 flex flex-col min-h-0 min-w-0 transition-all duration-300 ${sidebarOpen ? "lg:ml-60" : "lg:ml-0"}`}>
         {/* Navbar */}
-        <header className="sticky top-0 z-20 bg-white border-b border-slate-100 flex items-center gap-3 px-4 sm:px-6 h-14 shrink-0">
+        <header className="sticky top-0 z-20 bg-white border-b border-slate-100 flex items-center gap-2 px-3 sm:px-5 h-12 sm:h-14 shrink-0">
           {/* Sidebar toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="flex h-9 w-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
+            className="flex h-8 w-8 items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
           </button>
 
           {/* Logo */}
-          <Link href="/account" className="flex items-center gap-2.5 shrink-0">
-            <div className="flex h-8 w-8 items-center justify-center bg-[#7c3aed] text-white">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+          <Link href="/account" className="flex items-center gap-2 shrink-0">
+            <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center bg-[#7c3aed] text-white">
+              <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 21l8.982-11.795m-9 0L9.814 4.096 9.813 4.1a.75.75 0 011.396-.135L21 21M9.813 15.904L21 21m-11.188-5.096A9.75 9.75 0 013 12c0-5.385 4.365-9.75 9.75-9.75 2.11 0 4.06.669 5.64 1.8" />
               </svg>
             </div>
-            <span className="text-base font-bold tracking-tight text-[#0f172a] hidden sm:block">
+            <span className="text-sm sm:text-base font-bold tracking-tight text-[#0f172a] hidden sm:block">
               safetyanswers
             </span>
           </Link>
 
           {/* Search */}
-          <div className="flex-1 max-w-md mx-auto">
+          <div className="flex-1 max-w-sm sm:max-w-md mx-auto">
             <div className="relative">
-              <span className="absolute inset-y-0 left-3 flex items-center text-slate-400">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
+              <span className="absolute inset-y-0 left-2.5 flex items-center text-slate-400">
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
                 </svg>
               </span>
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
+                className="w-full pl-8 pr-3 py-1.5 sm:py-2 bg-slate-50 border border-slate-200 text-xs sm:text-sm text-slate-700 focus:outline-none focus:border-[#7c3aed] focus:ring-1 focus:ring-[#7c3aed] transition-all placeholder:text-slate-400"
               />
             </div>
           </div>
 
           {/* User / Logout */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div className="hidden sm:flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center bg-[#7c3aed] text-white text-xs font-bold">
+              <div className="flex h-7 w-7 items-center justify-center bg-[#7c3aed] text-white text-[11px] font-bold">
                 {user.name?.charAt(0)?.toUpperCase() || "U"}
               </div>
-              <span className="text-xs font-bold text-slate-700 max-w-[100px] truncate">
+              <span className="text-[11px] font-bold text-slate-700 max-w-[80px] truncate">
                 {user.name}
               </span>
             </div>
             <button
               onClick={() => logout()}
-              className="flex h-9 w-9 items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+              className="flex h-8 w-8 items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
               title="Logout"
             >
               <svg className="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" strokeWidth="2.5" stroke="currentColor">
@@ -295,7 +308,7 @@ export function AccountLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <main className="flex-1 px-3 sm:px-5 lg:px-6 pb-3 sm:pb-5 lg:pb-6 overflow-y-auto">
           {children}
         </main>
       </div>
